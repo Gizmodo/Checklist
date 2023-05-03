@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "ru.dl.checklist"
-    compileSdk = 33
+    compileSdkPreview = "UpsideDownCake"
 
     defaultConfig {
         applicationId = "ru.dl.checklist"
