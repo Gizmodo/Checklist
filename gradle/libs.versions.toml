@@ -1,0 +1,39 @@
+[versions]
+androidx-junit = "1.1.5"
+appcompat = "1.6.1"
+constraintlayout = "2.1.4"
+core-ktx = "1.10.0"
+dagger = "2.46"
+espresso-core = "3.5.1"
+junit = "4.13.2"
+material = "1.8.0"
+navigation-ui-ktx = "2.5.3"
+navigation-fragment-ktx = "2.5.3"
+room-ktx = "2.5.1"
+timber = "5.0.1"
+androidGradlePlugin = "8.2.0-alpha02"
+kotlinVersion = "1.8.21"
+kspVersion = "1.8.10-1.0.9"
+
+[libraries]
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso-core" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-junit" }
+androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation-ui-ktx" }
+androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation-fragment-ktx" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room-ktx" }
+androidx-room-guava = { module = "androidx.room:room-guava", version.ref = "room-ktx" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room-ktx" }
+androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room-ktx" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room-ktx" }
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+junit = { module = "junit:junit", version.ref = "junit" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+[plugins]
+
+[bundles]
