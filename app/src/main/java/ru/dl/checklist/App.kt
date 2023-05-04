@@ -2,9 +2,9 @@ package ru.dl.checklist
 
 import android.app.Application
 import android.content.Context
-import ru.dl.checklist.core.injection.AppComponent
-import ru.dl.checklist.core.injection.DaggerAppComponent
-import ru.dl.checklist.core.injection.DataBaseModule
+import ru.dl.checklist.di.component.AppComponent
+import ru.dl.checklist.di.component.DaggerAppComponent
+import ru.dl.checklist.di.module.DataBaseModule
 import timber.log.Timber
 
 class App: Application() {
@@ -31,7 +31,7 @@ class App: Application() {
     inner class LineNumberDebugTree : Timber.DebugTree() {
 
         override fun createStackElementTag(element: StackTraceElement): String {
-            return "EMIAS_(${element.fileName}:${element.lineNumber})"
+            return "CL(${element.fileName}:${element.lineNumber})"
         }
 
         override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {

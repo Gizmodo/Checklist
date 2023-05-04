@@ -1,8 +1,13 @@
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id ("kotlin-kapt")
-    id("com.google.devtools.ksp")
+    id("kotlin-kapt")
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.nav.safeargs)
+    alias(libs.plugins.secrets)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -39,9 +44,16 @@ android {
         viewBinding = true
     }
 }
-
+detekt {
+    buildUponDefaultConfig = false
+    allRules = false
+    baseline = file("$rootDir/detekt/baseline.xml")
+    input = files("src/main/java/com")
+    debug = true
+    parallel = true
+    reportsDir = file("reports_detekt")
+}
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -51,13 +63,13 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation( libs.timber)
-    implementation (libs.dagger)
-    kapt (libs.dagger.compiler)
-    implementation (libs.androidx.room.guava)
-    implementation (libs.androidx.room.ktx)
-    implementation (libs.androidx.room.paging)
-    implementation (libs.androidx.room.runtime)
-//    kapt ("androidx.room:room-compiler:2.5.1")
+    implementation(libs.timber)
+    implementation(libs.dagger)
+    kapt(libs.dagger.compiler)
+    implementation(libs.bundles.room)
+    implementation(libs.bundles.retrofit)
+//    kapt(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
+    detektPlugins(libs.detekt.plugin)
+    detektPlugins(libs.detekt.formatting)
 }

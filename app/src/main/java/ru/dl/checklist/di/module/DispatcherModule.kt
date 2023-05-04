@@ -1,4 +1,4 @@
-package ru.dl.checklist.core.injection
+package ru.dl.checklist.di.module
 
 import dagger.Module
 import dagger.Provides

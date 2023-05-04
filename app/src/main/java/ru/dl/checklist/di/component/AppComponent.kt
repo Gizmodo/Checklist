@@ -1,8 +1,10 @@
-package ru.dl.checklist.core.injection
+package ru.dl.checklist.di.component
 
 import dagger.Component
 import ru.dl.checklist.App
 import ru.dl.checklist.FirstFragment
+import ru.dl.checklist.di.module.DataBaseModule
+import ru.dl.checklist.di.module.DispatcherModule
 import javax.inject.Singleton
 
 

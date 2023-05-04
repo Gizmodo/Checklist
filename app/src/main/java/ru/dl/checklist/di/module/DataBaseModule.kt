@@ -1,9 +1,13 @@
-package ru.dl.checklist.core.injection
+package ru.dl.checklist.di.module
 
 import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import ru.dl.checklist.core.injection.AppDatabase
+import ru.dl.checklist.core.injection.ProtocolDao
+import ru.dl.checklist.core.injection.ProtocolsRepository
+import ru.dl.checklist.core.injection.ProtocolsRepositoryImpl
 import javax.inject.Singleton
 
 
