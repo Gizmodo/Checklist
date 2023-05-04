@@ -72,4 +72,5 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     detektPlugins(libs.detekt.plugin)
     detektPlugins(libs.detekt.formatting)
+    implementation(libs.sandwich)
 }
