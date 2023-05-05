@@ -5,9 +5,9 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import ru.dl.checklist.data.source.cache.AppDatabase
-import ru.dl.checklist.data.source.cache.ProtocolDao
-import ru.dl.checklist.data.source.cache.ProtocolsRepository
-import ru.dl.checklist.data.source.cache.ProtocolsRepositoryImpl
+import ru.dl.checklist.data.source.cache.CheckListRepository
+import ru.dl.checklist.data.source.cache.CheckListRepositoryImpl
+import ru.dl.checklist.data.source.cache.ChecklistDAO
 import javax.inject.Singleton
 
 
@@ -16,11 +16,11 @@ class DataBaseModule(private val application: Application) {
 
     @Singleton
     @Provides
-    fun provideProtocolDao(database: AppDatabase): ProtocolDao = database.protocolDao()
+    fun provideProtocolDao(database: AppDatabase): ChecklistDAO = database.checklistDAO()
 
     @Provides
     @Singleton
-    fun providesDatabaseRepository1(repository: ProtocolsRepositoryImpl): ProtocolsRepository =
+    fun providesDatabaseRepository1(repository: CheckListRepositoryImpl): CheckListRepository =
         repository
 
     @Provides

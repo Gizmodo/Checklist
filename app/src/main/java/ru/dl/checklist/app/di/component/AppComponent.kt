@@ -1,11 +1,11 @@
 package ru.dl.checklist.app.di.component
 
 import dagger.Component
+import ru.dl.checklist.app.app.App
 import ru.dl.checklist.app.di.module.DataBaseModule
 import ru.dl.checklist.app.di.module.DispatcherModule
 import ru.dl.checklist.app.di.module.NetworkModule
-import ru.dl.checklist.app.presenter.FirstFragment
-import ru.dl.checklist.app.presenter.app.App
+import ru.dl.checklist.app.presenter.FirstViewModel
 import javax.inject.Singleton
 
 
@@ -19,11 +19,12 @@ import javax.inject.Singleton
 )
 interface AppComponent {
     fun inject(app: App)
-    fun inject(fragment: FirstFragment)
+    fun inject(vm: FirstViewModel)
 
     @Component.Builder
     interface Builder {
         fun build(): AppComponent
         fun databaseModule(dataBaseModule: DataBaseModule): Builder
+        fun networkModule(networkModule: NetworkModule): Builder
     }
 }

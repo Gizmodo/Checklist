@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 
 @Dao
-interface ProtocolDao {
+interface ChecklistDAO {
     @Query("select * from inventory")
     fun selectAll(): List<InvItem>
 }

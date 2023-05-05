@@ -3,7 +3,7 @@ activityKtx = "1.8.0-alpha03"
 androidGradlePlugin = "8.2.0-alpha02"
 androidx-junit = "1.1.5"
 appcompat = "1.7.0-alpha02"
-arrowCore = "1.2.0-RC"
+arrow = "1.2.0-RC"
 constraintlayout = "2.1.4"
 core-ktx = "1.10.0"
 coreTesting = "1.1.1"
@@ -64,9 +64,10 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room-ktx
 androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room-ktx" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room-ktx" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
-arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrowCore" }
-arrow-fx-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrowCore" }
-
+arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
+arrow-fx-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrow" }
+arrow-optics = { module = "io.arrow-kt:arrow-optics", version.ref = "arrow" }
+arrow-optics-ksp-plugin = { module = "io.arrow-kt:arrow-optics-ksp-plugin", version.ref = "arrow" }
 core-testing = { module = "android.arch.core:core-testing", version.ref = "coreTesting" }
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
@@ -108,6 +109,6 @@ coroutines = ["kotlinx-coroutines-android", "kotlinx-coroutines-core"]
 navigation = ["androidx-navigation-dynamic-features-fragment", "androidx-navigation-fragment-ktx", "androidx-navigation-runtime-ktx", "androidx-navigation-ui-ktx"]
 room = ["androidx-room-ktx", "androidx-room-paging", "androidx-room-runtime", "androidx-work-runtime-ktx"]
 lifecycle = ["androidx-lifecycle-livedata-ktx", "androidx-lifecycle-process", "androidx-lifecycle-reactivestreams-ktx", "androidx-lifecycle-runtime-ktx", "androidx-lifecycle-service", "androidx-lifecycle-viewmodel-ktx", "androidx-lifecycle-viewmodel-savedstate"]
-arrow = ["arrow-core", "arrow-fx-coroutines"]
+arrow = ["arrow-core", "arrow-fx-coroutines","arrow-optics"]
 datastore = ["androidx-datastore", "androidx-datastore-preferences"]
 retrofit = ["converter-gson", "converter-scalars", "retrofit-kotlin-serialization", "kotlinx-serialization-json", "retrofit-core", "okhttp-core", "okhttp-logging", "kotlin-serialization"]

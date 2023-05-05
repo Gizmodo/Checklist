@@ -1,10 +1,11 @@
-package ru.dl.checklist.app.presenter.app
+package ru.dl.checklist.app.app
 
 import android.app.Application
 import android.content.Context
 import ru.dl.checklist.app.di.component.AppComponent
 import ru.dl.checklist.app.di.component.DaggerAppComponent
 import ru.dl.checklist.app.di.module.DataBaseModule
+import ru.dl.checklist.app.di.module.NetworkModule
 import timber.log.Timber
 
 class App: Application() {
@@ -26,6 +27,7 @@ class App: Application() {
         appComponent = DaggerAppComponent
             .builder()
             .databaseModule(DataBaseModule(this))
+            .networkModule(NetworkModule)
             .build()
     }
     inner class LineNumberDebugTree : Timber.DebugTree() {
