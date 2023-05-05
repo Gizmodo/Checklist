@@ -1,10 +1,10 @@
-package ru.dl.checklist
+package ru.dl.checklist.app.presenter.app
 
 import android.app.Application
 import android.content.Context
-import ru.dl.checklist.di.component.AppComponent
-import ru.dl.checklist.di.component.DaggerAppComponent
-import ru.dl.checklist.di.module.DataBaseModule
+import ru.dl.checklist.app.di.component.AppComponent
+import ru.dl.checklist.app.di.component.DaggerAppComponent
+import ru.dl.checklist.app.di.module.DataBaseModule
 import timber.log.Timber
 
 class App: Application() {

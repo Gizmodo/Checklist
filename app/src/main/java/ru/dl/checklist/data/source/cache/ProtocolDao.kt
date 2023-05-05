@@ -1,4 +1,4 @@
-package ru.dl.checklist.core.injection
+package ru.dl.checklist.data.source.cache
 
 import androidx.room.ColumnInfo
 import androidx.room.Dao

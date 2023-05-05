@@ -1,4 +1,4 @@
-package ru.dl.checklist.di.module
+package ru.dl.checklist.app.di.module
 
 import com.google.gson.GsonBuilder
 import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
@@ -10,6 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import ru.dl.checklist.BuildConfig.BASEURL
+import ru.dl.checklist.data.source.remote.RemoteApi
 import timber.log.Timber
 import javax.inject.Singleton
 
@@ -45,7 +46,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideFoodApi(retrofit: Retrofit): FoodApi {
-        return retrofit.create(FoodApi::class.java)
+    fun provideFoodApi(retrofit: Retrofit): RemoteApi {
+        return retrofit.create(RemoteApi::class.java)
     }
 }

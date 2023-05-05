@@ -1,4 +1,4 @@
-package ru.dl.checklist
+package ru.dl.checklist.app.presenter
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,8 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import ru.dl.checklist.app.presenter.app.App
+import ru.dl.checklist.R
 import ru.dl.checklist.databinding.FragmentFirstBinding
-import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.

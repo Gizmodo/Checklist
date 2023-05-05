@@ -1,4 +1,4 @@
-package ru.dl.checklist
+package ru.dl.checklist.app.presenter
 
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
@@ -9,6 +9,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import ru.dl.checklist.R
 import ru.dl.checklist.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

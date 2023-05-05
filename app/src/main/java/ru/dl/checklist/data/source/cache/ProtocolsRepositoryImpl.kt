@@ -1,7 +1,9 @@
-package ru.dl.checklist.core.injection
+package ru.dl.checklist.data.source.cache
 
 import kotlinx.coroutines.CoroutineDispatcher
-import ru.dl.checklist.di.module.IoDispatcher
+import ru.dl.checklist.app.di.module.IoDispatcher
+import ru.dl.checklist.data.source.cache.ProtocolDao
+import ru.dl.checklist.data.source.cache.ProtocolsRepository
 import javax.inject.Inject
 
 class ProtocolsRepositoryImpl @Inject constructor(

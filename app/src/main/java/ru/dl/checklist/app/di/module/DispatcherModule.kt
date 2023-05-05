@@ -1,4 +1,4 @@
-package ru.dl.checklist.di.module
+package ru.dl.checklist.app.di.module
 
 import dagger.Module
 import dagger.Provides

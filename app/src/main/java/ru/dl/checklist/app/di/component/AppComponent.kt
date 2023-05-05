@@ -1,10 +1,11 @@
-package ru.dl.checklist.di.component
+package ru.dl.checklist.app.di.component
 
 import dagger.Component
-import ru.dl.checklist.App
-import ru.dl.checklist.FirstFragment
-import ru.dl.checklist.di.module.DataBaseModule
-import ru.dl.checklist.di.module.DispatcherModule
+import ru.dl.checklist.app.di.module.DataBaseModule
+import ru.dl.checklist.app.di.module.DispatcherModule
+import ru.dl.checklist.app.di.module.NetworkModule
+import ru.dl.checklist.app.presenter.FirstFragment
+import ru.dl.checklist.app.presenter.app.App
 import javax.inject.Singleton
 
 
@@ -13,6 +14,7 @@ import javax.inject.Singleton
     modules = [
         DataBaseModule::class,
         DispatcherModule::class,
+        NetworkModule::class,
     ]
 )
 interface AppComponent {
