@@ -54,6 +54,9 @@ detekt {
     reportsDir = file("reports_detekt")
 }
 dependencies {
+    implementation(libs.legacy.support.v4)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
     detektPlugins(libs.detekt.formatting)

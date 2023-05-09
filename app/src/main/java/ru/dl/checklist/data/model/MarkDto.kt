@@ -1,4 +1,4 @@
-package ru.dl.checklist.data.remote
+package ru.dl.checklist.data.model
 
 
 import com.google.gson.annotations.SerializedName

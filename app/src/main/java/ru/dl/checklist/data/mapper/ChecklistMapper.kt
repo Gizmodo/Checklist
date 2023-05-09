@@ -1,10 +1,10 @@
-package ru.dl.checklist.app.mapper
+package ru.dl.checklist.data.mapper
 
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.ApiSuccessModelMapper
-import ru.dl.checklist.data.remote.ChecklistDto
-import ru.dl.checklist.data.remote.MarkDto
-import ru.dl.checklist.data.remote.ZoneDto
+import ru.dl.checklist.data.model.ChecklistDto
+import ru.dl.checklist.data.model.MarkDto
+import ru.dl.checklist.data.model.ZoneDto
 import ru.dl.checklist.domain.model.Address
 import ru.dl.checklist.domain.model.AuditDate
 import ru.dl.checklist.domain.model.Checker

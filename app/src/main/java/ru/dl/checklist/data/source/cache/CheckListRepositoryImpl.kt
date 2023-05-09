@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
 import org.json.JSONObject
 import ru.dl.checklist.app.di.module.IoDispatcher
-import ru.dl.checklist.app.mapper.ChecklistMapper
+import ru.dl.checklist.data.mapper.ChecklistMapper
 import ru.dl.checklist.app.utils.ApiResult
 import ru.dl.checklist.app.utils.HTTPConstants
 import ru.dl.checklist.data.source.remote.RemoteApi

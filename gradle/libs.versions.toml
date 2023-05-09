@@ -35,6 +35,8 @@ secrets = "2.0.1"
 timber = "5.0.1"
 whatif = "1.1.2"
 workRuntimeKtx = "2.8.1"
+kotlin = "1.8.21"
+legacy-support-v4 = "1.0.0"
 
 [libraries]
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
@@ -95,6 +97,7 @@ retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.r
 okhttp-core = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 kotlin-serialization = { group = "org.jetbrains.kotlin", name = "kotlin-serialization", version.ref = "kotlinVersion" }
+legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacy-support-v4" }
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
@@ -103,6 +106,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 nav-safeargs = { id = "androidx.navigation.safeargs", version.ref = "navigation" }
 secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 [bundles]
 coroutines = ["kotlinx-coroutines-android", "kotlinx-coroutines-core"]
