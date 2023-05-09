@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import ru.dl.checklist.app.app.App
 import ru.dl.checklist.app.utils.ApiResult
 import ru.dl.checklist.app.utils.SD
-import ru.dl.checklist.domain.model.ChecklistDomain
+import ru.dl.checklist.domain.model.ChecklistsDomain
 import ru.dl.checklist.domain.usecase.GetChecklistUseCase
 import javax.inject.Inject
 
@@ -29,7 +29,7 @@ class FirstViewModel : ViewModel() {
         loadFoodList()
     }
 
-    private val foodChannel = Channel<SD<ChecklistDomain>>()
+    private val foodChannel = Channel<SD<ChecklistsDomain>>()
     val foodEvents = foodChannel.receiveAsFlow()
 
     @Inject

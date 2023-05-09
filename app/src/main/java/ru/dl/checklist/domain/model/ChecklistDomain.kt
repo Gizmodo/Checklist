@@ -1,5 +1,9 @@
 package ru.dl.checklist.domain.model
 
+data class ChecklistsDomain(
+    val checklists: List<ChecklistDomain>
+)
+
 data class ChecklistDomain(
     val address: Address,
     val auditDate: AuditDate,

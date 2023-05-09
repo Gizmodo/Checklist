@@ -15,11 +15,11 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
 import org.json.JSONObject
 import ru.dl.checklist.app.di.module.IoDispatcher
-import ru.dl.checklist.data.mapper.ChecklistMapper
 import ru.dl.checklist.app.utils.ApiResult
 import ru.dl.checklist.app.utils.HTTPConstants
+import ru.dl.checklist.data.mapper.ChecklistsMapper
 import ru.dl.checklist.data.source.remote.RemoteApi
-import ru.dl.checklist.domain.model.ChecklistDomain
+import ru.dl.checklist.domain.model.ChecklistsDomain
 import timber.log.Timber
 import java.net.UnknownHostException
 import javax.inject.Inject
@@ -33,9 +33,9 @@ class CheckListRepositoryImpl @Inject constructor(
         val data = localDataSource.selectAll()
     }
 
-    override fun getCheckList(): Flow<ApiResult<ChecklistDomain>> = flow {
+    override fun getCheckList(): Flow<ApiResult<ChecklistsDomain>> = flow {
         val response = remoteDataSource.getChecklist()
-        response.suspendOnSuccess(ChecklistMapper) {
+        response.suspendOnSuccess(ChecklistsMapper) {
             emit(ApiResult.Success(this))
         }.suspendOnError {
             Timber.e("suspendOnError ${statusCode.code}")
