@@ -6,15 +6,11 @@ import ru.dl.checklist.data.model.remote.ChecklistDto
 import ru.dl.checklist.data.model.remote.ChecklistsDto
 import ru.dl.checklist.data.model.remote.MarkDto
 import ru.dl.checklist.data.model.remote.ZoneDto
-import ru.dl.checklist.domain.model.Address
-import ru.dl.checklist.domain.model.AuditDate
-import ru.dl.checklist.domain.model.Checker
 import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.model.ChecklistsDomain
 import ru.dl.checklist.domain.model.MarkDomain
-import ru.dl.checklist.domain.model.Senior
-import ru.dl.checklist.domain.model.ShortName
 import ru.dl.checklist.domain.model.ZoneDomain
+import ru.dl.checklist.domain.model.valueclasses.valueclasses
 
 object ChecklistsMapper : ApiSuccessModelMapper<ChecklistsDto, ChecklistsDomain> {
     override fun map(apiSuccessResponse: ApiResponse.Success<ChecklistsDto>): ChecklistsDomain {
@@ -27,15 +23,16 @@ object ChecklistsMapper : ApiSuccessModelMapper<ChecklistsDto, ChecklistsDomain>
 
     private fun mapChecklistDtoToDomain(dto: ChecklistDto?): ChecklistDomain? {
         return dto?.let {
-            val address = Address(it.address ?: "")
-            val auditDate = AuditDate(it.auditDate ?: "")
-            val checker = Checker(it.checker ?: "")
-            val senior = Senior(it.senior ?: "")
-            val shortName = ShortName(it.shortName ?: "")
+            val uuid = it.uuid ?: ""
+            val address = valueclasses.Address(it.address ?: "")
+            val auditDate = valueclasses.AuditDate(it.auditDate ?: "")
+            val checker = valueclasses.Checker(it.checker ?: "")
+            val senior = valueclasses.Senior(it.senior ?: "")
+            val shortName = valueclasses.ShortName(it.shortName ?: "")
             val zones = it.zones?.mapNotNull { zoneDto ->
                 zoneDto?.let { mapZoneDtoToDomain(zoneDto) }
             } ?: emptyList()
-            ChecklistDomain(address, auditDate, checker, senior, shortName, zones)
+            ChecklistDomain(uuid, address, auditDate, checker, senior, shortName, zones)
         }
     }
 
@@ -44,7 +41,7 @@ object ChecklistsMapper : ApiSuccessModelMapper<ChecklistsDto, ChecklistsDomain>
             val marks = it.marks?.mapNotNull { markDto ->
                 mapMarkDtoToDomain(markDto)
             } ?: emptyList()
-            ZoneDomain(it.id ?: 0, marks, it.zone ?: "")
+            ZoneDomain(marks = marks, zone = it.zone ?: "")
         }
     }
 

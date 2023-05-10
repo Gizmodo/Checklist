@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import ru.dl.checklist.data.model.entity.ZoneEntity
 
@@ -17,7 +18,8 @@ interface ZoneDao {
     fun getById(id: Long): ZoneEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(zone: ZoneEntity): Long
+    @Transaction
+    suspend fun insert(zone: ZoneEntity): Long
 
     @Update
     fun update(zone: ZoneEntity)

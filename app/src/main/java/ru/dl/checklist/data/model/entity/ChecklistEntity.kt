@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "checklist")
 data class ChecklistEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @ColumnInfo(name = "uuid") val uuid: String,
     @ColumnInfo(name = "address") val address: String,
     @ColumnInfo(name = "audit_date") val auditDate: String,
     @ColumnInfo(name = "checker") val checker: String,

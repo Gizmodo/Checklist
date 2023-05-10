@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import ru.dl.checklist.data.model.entity.MarkEntity
 
@@ -17,7 +18,8 @@ interface MarkDao {
     fun getById(id: Long): MarkEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(mark: MarkEntity): Long
+    @Transaction
+    suspend fun insert(mark: MarkEntity): Long
 
     @Update
     fun update(mark: MarkEntity)

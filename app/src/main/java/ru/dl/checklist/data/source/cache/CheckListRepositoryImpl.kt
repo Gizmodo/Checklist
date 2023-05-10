@@ -8,11 +8,15 @@ import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
 import com.skydoves.sandwich.suspendOnSuccess
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import ru.dl.checklist.app.di.module.IoDispatcher
 import ru.dl.checklist.app.utils.ApiResult
@@ -33,24 +37,34 @@ class CheckListRepositoryImpl @Inject constructor(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : CheckListRepository {
     override fun getCheckList(): Flow<ApiResult<ChecklistsDomain>> = flow {
+        val myScope = CoroutineScope(Dispatchers.IO)
         val response = remoteDataSource.getChecklist()
         response.suspendOnSuccess(ChecklistsMapper) {
-            val checklistsDomain = this
-            for (checklist in checklists) {
-                val entity = checklist.toEntity()
-                val idInsertedCheckList = checklistDao.insert(entity)
-                // Save zones for this checklist
-                for (zone in checklist.zones) {
-                    val zoneEntity = zone.toEntity(idInsertedCheckList)
-                    val idInsertedZone = zoneDao.insert(zoneEntity)
-                    // Save marks for this zone
-                    for (mark in zone.marks) {
-                        val markEntity = mark.toEntity(idInsertedZone)
-                        markDao.insert(markEntity)
+            val _this = this
+            myScope.launch {
+                try {
+                    withContext(dispatcher) {
+                        checklists.forEach { checklist ->
+                            val exist = checklistDao.getByUUID(checklist.uuid)
+                            exist?.apply { checklistDao.delete(this) }
+                            val newChecklistId = checklistDao.insert(checklist.toEntity())
+                            checklist.zones.forEach { zone ->
+                                val newZoneId = zoneDao.insert(zone.toEntity(newChecklistId))
+                                /*  zone.marks.forEach { mark ->
+                                      markDao.insert(mark.toEntity(newZoneId))
+                                  }*/
+                                zone.marks.map { it.toEntity(newZoneId) }
+                                    .onEach { markDao.insert(it) }
+                            }
+                        }
                     }
+                    emit(ApiResult.Success(_this))
+                } catch (e: Exception) {
+                    // Handle the exception here
+                    Timber.e("An error occurred: " + e.message)
+                    emit(ApiResult.Error(e.message.toString()))
                 }
             }
-            emit(ApiResult.Success(this))
         }.suspendOnError {
             Timber.e("suspendOnError ${statusCode.code}")
             when (this.statusCode) {

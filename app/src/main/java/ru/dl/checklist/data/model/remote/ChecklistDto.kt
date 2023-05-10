@@ -4,6 +4,8 @@ package ru.dl.checklist.data.model.remote
 import com.google.gson.annotations.SerializedName
 
 data class ChecklistDto(
+    @SerializedName("uuid")
+    val uuid :String?,
     @SerializedName("address")
     val address: String?,
     @SerializedName("audit_date")

@@ -7,6 +7,7 @@ import ru.dl.checklist.domain.model.ZoneDomain
 object Mapper {
     fun ChecklistDomain.toEntity(): ChecklistEntity {
         return ChecklistEntity(
+            uuid = uuid,
             address = address.value,
             auditDate = auditDate.value,
             checker = checker.value,
