@@ -2,20 +2,18 @@ package ru.dl.checklist.data.mapper
 
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.ApiSuccessModelMapper
-import ru.dl.checklist.data.model.ChecklistDto
-import ru.dl.checklist.data.model.ChecklistsDto
-import ru.dl.checklist.data.model.MarkDto
-import ru.dl.checklist.data.model.ZoneDto
+import ru.dl.checklist.data.model.remote.ChecklistDto
+import ru.dl.checklist.data.model.remote.ChecklistsDto
+import ru.dl.checklist.data.model.remote.MarkDto
+import ru.dl.checklist.data.model.remote.ZoneDto
 import ru.dl.checklist.domain.model.Address
 import ru.dl.checklist.domain.model.AuditDate
 import ru.dl.checklist.domain.model.Checker
 import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.model.ChecklistsDomain
 import ru.dl.checklist.domain.model.MarkDomain
-import ru.dl.checklist.domain.model.Point
 import ru.dl.checklist.domain.model.Senior
 import ru.dl.checklist.domain.model.ShortName
-import ru.dl.checklist.domain.model.Title
 import ru.dl.checklist.domain.model.ZoneDomain
 
 object ChecklistsMapper : ApiSuccessModelMapper<ChecklistsDto, ChecklistsDomain> {
@@ -52,7 +50,7 @@ object ChecklistsMapper : ApiSuccessModelMapper<ChecklistsDto, ChecklistsDomain>
 
     private fun mapMarkDtoToDomain(dto: MarkDto?): MarkDomain? {
         return dto?.let {
-            MarkDomain(Point(it.points ?: 0), Title(it.title ?: ""))
+            MarkDomain(it.points ?: 0, it.title ?: "")
         }
     }
 }

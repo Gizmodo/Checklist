@@ -4,21 +4,27 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import ru.dl.checklist.data.model.entity.ChecklistEntity
+import ru.dl.checklist.data.model.entity.MarkEntity
+import ru.dl.checklist.data.model.entity.ZoneEntity
 
 @Database(
     entities = [
-        InvItem::class,
+        ChecklistEntity::class,
+        ZoneEntity::class,
+        MarkEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
-
-    )
+)
 /*@TypeConverters(
     LocalDateConverter::class,
     LocalDateTimeConverter::class
 )*/
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun checklistDAO(): ChecklistDAO
+    abstract fun checklistDao(): ChecklistDao
+    abstract fun zoneDao(): ZoneDao
+    abstract fun markDao(): MarkDao
 
     companion object {
         @Volatile
@@ -30,7 +36,7 @@ abstract class AppDatabase : RoomDatabase() {
                     .databaseBuilder(
                         context.applicationContext,
                         AppDatabase::class.java,
-                        "emias.db"
+                        "app_database"
                     )
                     .fallbackToDestructiveMigration()
                     .build()

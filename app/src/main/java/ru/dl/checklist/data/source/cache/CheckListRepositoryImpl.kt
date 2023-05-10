@@ -18,6 +18,7 @@ import ru.dl.checklist.app.di.module.IoDispatcher
 import ru.dl.checklist.app.utils.ApiResult
 import ru.dl.checklist.app.utils.HTTPConstants
 import ru.dl.checklist.data.mapper.ChecklistsMapper
+import ru.dl.checklist.data.model.entity.Mapper.toEntity
 import ru.dl.checklist.data.source.remote.RemoteApi
 import ru.dl.checklist.domain.model.ChecklistsDomain
 import timber.log.Timber
@@ -25,17 +26,30 @@ import java.net.UnknownHostException
 import javax.inject.Inject
 
 class CheckListRepositoryImpl @Inject constructor(
-    private val localDataSource: ChecklistDAO,
+    private val checklistDao: ChecklistDao,
+    private val zoneDao: ZoneDao,
+    private val markDao: MarkDao,
     private val remoteDataSource: RemoteApi,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : CheckListRepository {
-    fun test() {
-        val data = localDataSource.selectAll()
-    }
-
     override fun getCheckList(): Flow<ApiResult<ChecklistsDomain>> = flow {
         val response = remoteDataSource.getChecklist()
         response.suspendOnSuccess(ChecklistsMapper) {
+            val checklistsDomain = this
+            for (checklist in checklists) {
+                val entity = checklist.toEntity()
+                val idInsertedCheckList = checklistDao.insert(entity)
+                // Save zones for this checklist
+                for (zone in checklist.zones) {
+                    val zoneEntity = zone.toEntity(idInsertedCheckList)
+                    val idInsertedZone = zoneDao.insert(zoneEntity)
+                    // Save marks for this zone
+                    for (mark in zone.marks) {
+                        val markEntity = mark.toEntity(idInsertedZone)
+                        markDao.insert(markEntity)
+                    }
+                }
+            }
             emit(ApiResult.Success(this))
         }.suspendOnError {
             Timber.e("suspendOnError ${statusCode.code}")
@@ -76,4 +90,6 @@ class CheckListRepositoryImpl @Inject constructor(
         emit(ApiResult.Error(it.message.orEmpty()))
     }
         .flowOn(dispatcher)
+
+
 }

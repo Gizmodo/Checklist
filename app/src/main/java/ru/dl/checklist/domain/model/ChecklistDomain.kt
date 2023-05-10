@@ -20,8 +20,8 @@ data class ZoneDomain(
 )
 
 data class MarkDomain(
-    val points: Point,
-    val title: Title
+    val points: Int,
+    val title: String
 )
 
 @JvmInline

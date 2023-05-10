@@ -7,7 +7,9 @@ import dagger.Provides
 import ru.dl.checklist.data.source.cache.AppDatabase
 import ru.dl.checklist.data.source.cache.CheckListRepository
 import ru.dl.checklist.data.source.cache.CheckListRepositoryImpl
-import ru.dl.checklist.data.source.cache.ChecklistDAO
+import ru.dl.checklist.data.source.cache.ChecklistDao
+import ru.dl.checklist.data.source.cache.MarkDao
+import ru.dl.checklist.data.source.cache.ZoneDao
 import javax.inject.Singleton
 
 
@@ -16,7 +18,15 @@ class DataBaseModule(private val application: Application) {
 
     @Singleton
     @Provides
-    fun provideProtocolDao(database: AppDatabase): ChecklistDAO = database.checklistDAO()
+    fun provideChecklistDao(database: AppDatabase): ChecklistDao = database.checklistDao()
+
+    @Singleton
+    @Provides
+    fun provideZoneDao(database: AppDatabase): ZoneDao = database.zoneDao()
+
+    @Singleton
+    @Provides
+    fun provideMarkDao(database: AppDatabase): MarkDao = database.markDao()
 
     @Provides
     @Singleton
