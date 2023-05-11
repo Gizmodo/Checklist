@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.dagger)
     implementation(libs.material)
     implementation(libs.sandwich)
+    implementation(libs.whatif)
     implementation(libs.timber)
     kapt(libs.dagger.compiler)
     ksp(libs.androidx.room.compiler)

@@ -16,7 +16,7 @@ interface ChecklistDao {
     @Query("SELECT * FROM checklist WHERE uuid = :uuid")
     fun getByUUID(uuid: String): ChecklistEntity?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     @Transaction
     suspend fun insert(checklist: ChecklistEntity): Long
 

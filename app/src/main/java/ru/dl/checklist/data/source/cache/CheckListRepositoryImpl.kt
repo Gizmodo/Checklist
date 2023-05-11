@@ -7,6 +7,7 @@ import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
 import com.skydoves.sandwich.suspendOnSuccess
+import com.skydoves.whatif.whatIfNotNull
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,30 +42,38 @@ class CheckListRepositoryImpl @Inject constructor(
         val response = remoteDataSource.getChecklist()
         response.suspendOnSuccess(ChecklistsMapper) {
             val _this = this
-            myScope.launch {
+            var scopeResult: ApiResult<ChecklistsDomain> = ApiResult.Loading
+            val job = myScope.launch {
                 try {
                     withContext(dispatcher) {
                         checklists.forEach { checklist ->
-                            val exist = checklistDao.getByUUID(checklist.uuid)
-                            exist?.apply { checklistDao.delete(this) }
-                            val newChecklistId = checklistDao.insert(checklist.toEntity())
-                            checklist.zones.forEach { zone ->
-                                val newZoneId = zoneDao.insert(zone.toEntity(newChecklistId))
-                                /*  zone.marks.forEach { mark ->
-                                      markDao.insert(mark.toEntity(newZoneId))
-                                  }*/
-                                zone.marks.map { it.toEntity(newZoneId) }
-                                    .onEach { markDao.insert(it) }
-                            }
+                            checklistDao.getByUUID(checklist.uuid)
+                                .whatIfNotNull(
+                                    whatIf = { },
+                                    whatIfNot = {
+                                        val newChecklistId =
+                                            checklistDao.insert(checklist.toEntity())
+                                        checklist.zones.forEach { zone ->
+                                            val newZoneId =
+                                                zoneDao.insert(zone.toEntity(newChecklistId))
+                                            /*  zone.marks.forEach { mark ->
+                                                  markDao.insert(mark.toEntity(newZoneId))
+                                              }*/
+                                            zone.marks.map { it.toEntity(newZoneId) }
+                                                .onEach { markDao.insert(it) }
+                                        }
+                                    }
+                                )
                         }
                     }
-                    emit(ApiResult.Success(_this))
+                    scopeResult = ApiResult.Success(_this)
                 } catch (e: Exception) {
-                    // Handle the exception here
                     Timber.e("An error occurred: " + e.message)
-                    emit(ApiResult.Error(e.message.toString()))
+                    scopeResult = ApiResult.Error(e.message.toString())
                 }
             }
+            job.join()
+            emit(scopeResult)
         }.suspendOnError {
             Timber.e("suspendOnError ${statusCode.code}")
             when (this.statusCode) {
