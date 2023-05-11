@@ -5,7 +5,7 @@ import ru.dl.checklist.app.app.App
 import ru.dl.checklist.app.di.module.DataBaseModule
 import ru.dl.checklist.app.di.module.DispatcherModule
 import ru.dl.checklist.app.di.module.NetworkModule
-import ru.dl.checklist.app.presenter.FirstViewModel
+import ru.dl.checklist.app.presenter.main.MainViewModel
 import javax.inject.Singleton
 
 
@@ -19,7 +19,7 @@ import javax.inject.Singleton
 )
 interface AppComponent {
     fun inject(app: App)
-    fun inject(vm: FirstViewModel)
+    fun inject(vm: MainViewModel)
 
     @Component.Builder
     interface Builder {
