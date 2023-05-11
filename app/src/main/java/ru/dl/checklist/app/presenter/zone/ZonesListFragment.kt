@@ -1,32 +1,46 @@
 package ru.dl.checklist.app.presenter.zone
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import ru.dl.checklist.R
+import ru.dl.checklist.app.ext.collectLatestLifecycleFlow
+import ru.dl.checklist.app.ext.getViewModel
+import ru.dl.checklist.app.ext.viewLifecycleLazy
+import ru.dl.checklist.databinding.FragmentZonesListBinding
+import timber.log.Timber
 
-class ZonesListFragment : Fragment() {
+class ZonesListFragment : Fragment(R.layout.fragment_zones_list) {
 
     companion object {
         fun newInstance() = ZonesListFragment()
     }
 
-    private lateinit var viewModel: ZonesListViewModel
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_zones_list, container, false)
+    val args: ZonesListFragmentArgs by navArgs()
+    private val binding by viewLifecycleLazy(FragmentZonesListBinding::bind)
+    private val viewModel: ZonesListViewModel by lazy {
+        getViewModel { ZonesListViewModel() }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(ZonesListViewModel::class.java)
-        // TODO: Use the ViewModel
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val checklistUUID = args.checklistUUID
+        Timber.i(checklistUUID)
+        initUI()
+        initViewModelObservers()
+        viewModel.onEvent(ZoneListEvent.LoadZoneListByCategory(checklistUUID))
+    }
+
+    private fun initViewModelObservers() {
+        collectLatestLifecycleFlow(viewModel.zoneListEvent) {
+            Timber.i("Collected data from ZoneFragment")
+            Timber.d(it.toString())
+        }
+    }
+
+    private fun initUI() {
+        // TODO("Not yet implemented")
     }
 
 }

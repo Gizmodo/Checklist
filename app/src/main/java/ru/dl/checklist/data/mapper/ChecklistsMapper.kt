@@ -2,6 +2,7 @@ package ru.dl.checklist.data.mapper
 
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.ApiSuccessModelMapper
+import ru.dl.checklist.data.model.entity.ZoneEntity
 import ru.dl.checklist.data.model.remote.ChecklistDto
 import ru.dl.checklist.data.model.remote.ChecklistsDto
 import ru.dl.checklist.data.model.remote.MarkDto
@@ -10,6 +11,7 @@ import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.model.ChecklistsDomain
 import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.ZoneDomain
+import ru.dl.checklist.domain.model.ZoneDomain2
 import ru.dl.checklist.domain.model.valueclasses.valueclasses
 
 object ChecklistsMapper : ApiSuccessModelMapper<ChecklistsDto, ChecklistsDomain> {
@@ -36,7 +38,7 @@ object ChecklistsMapper : ApiSuccessModelMapper<ChecklistsDto, ChecklistsDomain>
         }
     }
 
-    private fun mapZoneDtoToDomain(dto: ZoneDto?): ZoneDomain? {
+    fun mapZoneDtoToDomain(dto: ZoneDto?): ZoneDomain? {
         return dto?.let {
             val marks = it.marks?.mapNotNull { markDto ->
                 mapMarkDtoToDomain(markDto)
@@ -44,7 +46,11 @@ object ChecklistsMapper : ApiSuccessModelMapper<ChecklistsDto, ChecklistsDomain>
             ZoneDomain(marks = marks, zone = it.zone ?: "")
         }
     }
-
+fun mapZoneEntityToDomain(entity:ZoneEntity?):ZoneDomain2?{
+    return entity?.let {
+        ZoneDomain2(entity.id,entity.zone)
+    }
+}
     private fun mapMarkDtoToDomain(dto: MarkDto?): MarkDomain? {
         return dto?.let {
             MarkDomain(it.points ?: 0, it.title ?: "")

@@ -26,7 +26,7 @@ class MainViewModel : ViewModel() {
 
     init {
         App.appComponent.inject(this)
-        loadFoodList()
+     //   loadFoodList()
     }
 
     private val foodChannel = Channel<SD<ChecklistsDomain>>()
@@ -34,7 +34,12 @@ class MainViewModel : ViewModel() {
 
     @Inject
     lateinit var getProtocolsListUseCase: dagger.Lazy<GetChecklistUseCase>
-    private fun loadFoodList() {
+    fun onEvent(event: ChecklistEvent) {
+        when (event) {
+            ChecklistEvent.LoadChecklist -> loadFoodList()
+        }
+    }
+     private fun loadFoodList() {
         viewModelScope.launch(exceptionHandler) {
             getProtocolsListUseCase.get().run().collectLatest { apiResult ->
                 when (apiResult) {

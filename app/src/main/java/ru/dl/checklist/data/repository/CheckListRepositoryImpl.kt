@@ -1,4 +1,4 @@
-package ru.dl.checklist.data.source.cache
+package ru.dl.checklist.data.repository
 
 import com.google.gson.JsonSyntaxException
 import com.google.gson.stream.MalformedJsonException
@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,8 +25,13 @@ import ru.dl.checklist.app.utils.ApiResult
 import ru.dl.checklist.app.utils.HTTPConstants
 import ru.dl.checklist.data.mapper.ChecklistsMapper
 import ru.dl.checklist.data.model.entity.Mapper.toEntity
+import ru.dl.checklist.data.source.cache.ChecklistDao
+import ru.dl.checklist.data.source.cache.MarkDao
+import ru.dl.checklist.data.source.cache.ZoneDao
 import ru.dl.checklist.data.source.remote.RemoteApi
 import ru.dl.checklist.domain.model.ChecklistsDomain
+import ru.dl.checklist.domain.model.ZoneDomain2
+import ru.dl.checklist.domain.repository.CheckListRepository
 import timber.log.Timber
 import java.net.UnknownHostException
 import javax.inject.Inject
@@ -41,6 +47,7 @@ class CheckListRepositoryImpl @Inject constructor(
         val myScope = CoroutineScope(Dispatchers.IO)
         val response = remoteDataSource.getChecklist()
         response.suspendOnSuccess(ChecklistsMapper) {
+            // TODO: смапить dto в entity и сохранить в БД. Отдать наружу чеклисты (без дочерних) в виде Model(Domain)
             val _this = this
             var scopeResult: ApiResult<ChecklistsDomain> = ApiResult.Loading
             val job = myScope.launch {
@@ -114,5 +121,12 @@ class CheckListRepositoryImpl @Inject constructor(
     }
         .flowOn(dispatcher)
 
+    override fun getZonesByChecklist(uuid: String): Flow<List<ZoneDomain2>> {
+        val inter = zoneDao.getZoneListByChecklist(uuid)
+        val interMap = inter.map { list ->
+            list.mapNotNull { ChecklistsMapper.mapZoneEntityToDomain(it) } ?: emptyList()
+        }
+        return interMap.flowOn(dispatcher)
+    }
 
 }

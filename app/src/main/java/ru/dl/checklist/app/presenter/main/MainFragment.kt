@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import ru.dl.checklist.R
 import ru.dl.checklist.app.ext.collectLatestLifecycleFlow
 import ru.dl.checklist.app.ext.getViewModel
+import ru.dl.checklist.app.ext.navigateExt
 import ru.dl.checklist.app.ext.viewLifecycleLazy
 import ru.dl.checklist.app.utils.SD
 import ru.dl.checklist.databinding.FragmentMainBinding
@@ -23,16 +24,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     private var checklistAdapter = ChecklistAdapter(mutableListOf(), ::onItemClick)
 
     private fun onItemClick(item: ChecklistDomain, position: Int) {
-        //TODO("Navigate next screen")
+        navigateExt(MainFragmentDirections.actionMainFragmentToZonesListFragment(item.uuid))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        /*binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-        }*/
         initUI()
+        viewModel.onEvent(ChecklistEvent.LoadChecklist)
         initViewModelObservers()
     }
 
@@ -50,6 +48,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private fun initViewModelObservers() {
         collectLatestLifecycleFlow(viewModel.foodEvents) {
+           Timber.i("Start collect")
             when (it) {
                 is SD.Error -> {
                     Timber.e(it.msg)

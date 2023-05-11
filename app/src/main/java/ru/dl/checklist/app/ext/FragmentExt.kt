@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.NavDirections
+import androidx.navigation.Navigation
 
 fun Fragment.setActivityTitle(@StringRes id: Int) {
     (activity as? AppCompatActivity)?.supportActionBar?.title = getString(id)
@@ -50,4 +52,8 @@ private class ViewLifecycleLazy<out T : Any>(
             cached = null
         }
     }
+}
+
+fun Fragment.navigateExt(directions: NavDirections) {
+    view?.let { Navigation.findNavController(it).navigate(directions) }
 }

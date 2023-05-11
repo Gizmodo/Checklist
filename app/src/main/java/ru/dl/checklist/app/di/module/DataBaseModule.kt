@@ -5,8 +5,8 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import ru.dl.checklist.data.source.cache.AppDatabase
-import ru.dl.checklist.data.source.cache.CheckListRepository
-import ru.dl.checklist.data.source.cache.CheckListRepositoryImpl
+import ru.dl.checklist.domain.repository.CheckListRepository
+import ru.dl.checklist.data.repository.CheckListRepositoryImpl
 import ru.dl.checklist.data.source.cache.ChecklistDao
 import ru.dl.checklist.data.source.cache.MarkDao
 import ru.dl.checklist.data.source.cache.ZoneDao
