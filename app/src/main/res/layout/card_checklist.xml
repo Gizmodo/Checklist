@@ -6,11 +6,9 @@
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="8dp"
-    android:elevation="6dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="6dp"
-    app:strokeColor="#673AB7"
-    app:strokeWidth="3dp">
+    style="@style/Widget.Material3.CardView.Outlined"
+
+>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
