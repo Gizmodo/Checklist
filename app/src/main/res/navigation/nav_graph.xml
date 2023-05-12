@@ -3,26 +3,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/MainFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="ru.dl.checklist.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        android:id="@+id/MainFragment"
+        android:name="ru.dl.checklist.app.presenter.main.MainFragment"
+        android:label="Чеклисты"
+        tools:layout="@layout/fragment_main">
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_MainFragment_to_zonesListFragment"
+            app:destination="@id/zonesListFragment" />
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="ru.dl.checklist.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
-
+        android:id="@+id/zonesListFragment"
+        android:name="ru.dl.checklist.app.presenter.zone.ZonesListFragment"
+        android:label="Зоны проверок"
+        tools:layout="@layout/fragment_zones_list">
+        <argument
+            android:name="checklistUUID"
+            app:argType="string" />
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_zonesListFragment_to_marksListFragment"
+            app:destination="@id/marksListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/marksListFragment"
+        android:name="ru.dl.checklist.app.presenter.mark.MarksListFragment"
+        android:label="Показатели"
+        tools:layout="@layout/fragment_marks_list">
+        <argument
+            android:name="zoneId"
+            app:argType="integer" />
     </fragment>
 </navigation>
