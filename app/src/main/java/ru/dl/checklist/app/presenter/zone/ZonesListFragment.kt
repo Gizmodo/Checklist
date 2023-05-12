@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import ru.dl.checklist.R
 import ru.dl.checklist.app.ext.collectLatestLifecycleFlow
 import ru.dl.checklist.app.ext.getViewModel
+import ru.dl.checklist.app.ext.navigateExt
 import ru.dl.checklist.app.ext.viewLifecycleLazy
 import ru.dl.checklist.databinding.FragmentZonesListBinding
 import ru.dl.checklist.domain.model.ZoneDomain
@@ -29,6 +30,7 @@ class ZonesListFragment : Fragment(R.layout.fragment_zones_list) {
 
     private fun onItemClick(zone: ZoneDomain) {
         Timber.i("Select zone $zone")
+        navigateExt(ZonesListFragmentDirections.actionZonesListFragmentToMarksListFragment(zone.id.toInt()))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

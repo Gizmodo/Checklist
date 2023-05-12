@@ -47,7 +47,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     }
 
     private fun initViewModelObservers() {
-        collectLatestLifecycleFlow(viewModel.foodEvents) {
+        collectLatestLifecycleFlow(viewModel.checklistEvent) {
             when (it) {
                 is SD.Error -> {
                     Timber.e(it.msg)

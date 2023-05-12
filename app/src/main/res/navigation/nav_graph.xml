@@ -24,7 +24,16 @@
             android:name="checklistUUID"
             app:argType="string" />
         <action
-            android:id="@+id/action_zonesListFragment_to_MainFragment"
-            app:destination="@id/MainFragment" />
+            android:id="@+id/action_zonesListFragment_to_marksListFragment"
+            app:destination="@id/marksListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/marksListFragment"
+        android:name="ru.dl.checklist.app.presenter.mark.MarksListFragment"
+        android:label="Показатели"
+        tools:layout="@layout/fragment_marks_list">
+        <argument
+            android:name="zoneId"
+            app:argType="integer" />
     </fragment>
 </navigation>

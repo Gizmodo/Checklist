@@ -30,6 +30,7 @@ import ru.dl.checklist.data.source.cache.MarkDao
 import ru.dl.checklist.data.source.cache.ZoneDao
 import ru.dl.checklist.data.source.remote.RemoteApi
 import ru.dl.checklist.domain.model.ChecklistDomain
+import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.ZoneDomain
 import ru.dl.checklist.domain.repository.CheckListRepository
 import timber.log.Timber
@@ -114,20 +115,25 @@ class CheckListRepositoryImpl @Inject constructor(
                 else -> emit(ApiResult.Error(this.exception.message.toString()))
             }
         }
-    }.onStart {
-        emit(ApiResult.Loading)
-    }.catch {
-        Timber.e(it)
-        emit(ApiResult.Error(it.message.orEmpty()))
-    }
+    }.onStart { emit(ApiResult.Loading) }
+        .catch {
+            Timber.e(it)
+            emit(ApiResult.Error(it.message.orEmpty()))
+        }
         .flowOn(dispatcher)
 
     override fun getZonesByChecklist(uuid: String): Flow<List<ZoneDomain>> {
         val inter = zoneDao.getZoneListByChecklist(uuid)
         val interMap = inter.map { list ->
-            list.map {
-                it.toDomain()
-            }
+            list.map { it.toDomain() }
+        }
+        return interMap.flowOn(dispatcher)
+    }
+
+    override fun getMarksByZone(zoneId: Long): Flow<List<MarkDomain>> {
+        val inter = markDao.getMarkListByZone(zoneId)
+        val interMap = inter.map { list ->
+            list.map { it.toDomain() }
         }
         return interMap.flowOn(dispatcher)
     }

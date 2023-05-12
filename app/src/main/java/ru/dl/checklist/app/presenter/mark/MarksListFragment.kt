@@ -1,31 +1,62 @@
 package ru.dl.checklist.app.presenter.mark
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import ru.dl.checklist.R
+import ru.dl.checklist.app.ext.collectLatestLifecycleFlow
+import ru.dl.checklist.app.ext.getViewModel
+import ru.dl.checklist.app.ext.viewLifecycleLazy
+import ru.dl.checklist.databinding.FragmentMarksListBinding
+import ru.dl.checklist.domain.model.MarkDomain
+import timber.log.Timber
 
-class MarksListFragment : Fragment() {
+class MarksListFragment : Fragment(R.layout.fragment_marks_list) {
 
     companion object {
         fun newInstance() = MarksListFragment()
     }
 
-    private lateinit var viewModel: MarksListViewModel
+    private val args: MarksListFragmentArgs by navArgs()
+    private val binding by viewLifecycleLazy(FragmentMarksListBinding::bind)
+    private val viewModel: MarksListViewModel by lazy {
+        getViewModel { MarksListViewModel() }
+    }
+    private var markListAdapter = MarkListAdapter(mutableListOf(), ::onItemClick)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_marks_list, container, false)
+    private fun onItemClick(markDomain: MarkDomain) {
+
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MarksListViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val zoneId = args.zoneId.toLong()
+        Timber.i(zoneId.toString())
+        initUI()
+        initViewModelObservers()
+        viewModel.onEvent(MarkListEvent.LoadMarkListByZone(zoneId))
     }
 
+    private fun initViewModelObservers() {
+        collectLatestLifecycleFlow(viewModel.markListEvent) {
+            Timber.i("Collected data from MarksListFragment")
+            Timber.d(it.toString())
+            markListAdapter.updateList(it)
+        }
+    }
+
+    private fun initUI() {
+        with(binding.rvMarkList) {
+            val animator = itemAnimator
+            if (animator is SimpleItemAnimator) {
+                animator.supportsChangeAnimations = false
+            }
+            layoutManager = LinearLayoutManager(requireContext())
+            setHasFixedSize(true)
+            adapter = markListAdapter
+        }
+    }
 }

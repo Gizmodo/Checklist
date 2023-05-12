@@ -20,7 +20,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun onException(throwable: Throwable) {
-        foodChannel.trySend(SD.Loading)
+        _listChannel.trySend(SD.Loading)
         // _statePrev.value = StatefulData.Error(throwable.message.toString())
     }
 
@@ -29,8 +29,8 @@ class MainViewModel : ViewModel() {
         //   loadFoodList()
     }
 
-    private val foodChannel = Channel<SD<List<ChecklistDomain>>>()
-    val foodEvents = foodChannel.receiveAsFlow()
+    private val _listChannel = Channel<SD<List<ChecklistDomain>>>()
+    val checklistEvent = _listChannel.receiveAsFlow()
 
     @Inject
     lateinit var getChecklistUseCase: dagger.Lazy<GetChecklistUseCase>
@@ -45,15 +45,15 @@ class MainViewModel : ViewModel() {
             getChecklistUseCase.get().run().collectLatest { apiResult ->
                 when (apiResult) {
                     is ApiResult.Error -> {
-                        foodChannel.send(SD.Error(apiResult._error))
+                        _listChannel.send(SD.Error(apiResult._error))
                     }
 
                     is ApiResult.Success -> {
-                        foodChannel.send(SD.Success(apiResult._data))
+                        _listChannel.send(SD.Success(apiResult._data))
                     }
 
                     ApiResult.Loading -> {
-                        foodChannel.send(SD.Loading)
+                        _listChannel.send(SD.Loading)
                     }
                 }
             }

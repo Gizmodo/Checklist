@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 import ru.dl.checklist.data.model.entity.MarkEntity
 
 @Dao
@@ -27,4 +28,10 @@ interface MarkDao {
     @Delete
     fun delete(mark: MarkEntity)
 
+    @Query(
+        "select mark.* from mark\n" +
+                "inner join zone on zone.id=mark.zoneId\n" +
+                "where zone.id=:zoneId"
+    )
+    fun getMarkListByZone(zoneId: Long): Flow<List<MarkEntity>>
 }

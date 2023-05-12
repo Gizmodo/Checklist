@@ -6,6 +6,7 @@ import ru.dl.checklist.app.di.module.DataBaseModule
 import ru.dl.checklist.app.di.module.DispatcherModule
 import ru.dl.checklist.app.di.module.NetworkModule
 import ru.dl.checklist.app.presenter.main.MainViewModel
+import ru.dl.checklist.app.presenter.mark.MarksListViewModel
 import ru.dl.checklist.app.presenter.zone.ZonesListViewModel
 import javax.inject.Singleton
 
@@ -22,6 +23,7 @@ interface AppComponent {
     fun inject(app: App)
     fun inject(vm: MainViewModel)
     fun inject(vm: ZonesListViewModel)
+    fun inject(vm: MarksListViewModel)
 
     @Component.Builder
     interface Builder {
