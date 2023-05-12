@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import ru.dl.checklist.app.app.App
 import ru.dl.checklist.app.utils.ApiResult
 import ru.dl.checklist.app.utils.SD
-import ru.dl.checklist.domain.model.ChecklistsDomain
+import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.usecase.GetChecklistUseCase
 import javax.inject.Inject
 
@@ -26,36 +26,34 @@ class MainViewModel : ViewModel() {
 
     init {
         App.appComponent.inject(this)
-     //   loadFoodList()
+        //   loadFoodList()
     }
 
-    private val foodChannel = Channel<SD<ChecklistsDomain>>()
+    private val foodChannel = Channel<SD<List<ChecklistDomain>>>()
     val foodEvents = foodChannel.receiveAsFlow()
 
     @Inject
-    lateinit var getProtocolsListUseCase: dagger.Lazy<GetChecklistUseCase>
+    lateinit var getChecklistUseCase: dagger.Lazy<GetChecklistUseCase>
     fun onEvent(event: ChecklistEvent) {
         when (event) {
             ChecklistEvent.LoadChecklist -> loadFoodList()
         }
     }
-     private fun loadFoodList() {
+
+    private fun loadFoodList() {
         viewModelScope.launch(exceptionHandler) {
-            getProtocolsListUseCase.get().run().collectLatest { apiResult ->
+            getChecklistUseCase.get().run().collectLatest { apiResult ->
                 when (apiResult) {
                     is ApiResult.Error -> {
                         foodChannel.send(SD.Error(apiResult._error))
-//                        _stateNew.value = StatefulData.Notify("${apiResult.error}")
                     }
 
                     is ApiResult.Success -> {
                         foodChannel.send(SD.Success(apiResult._data))
-//                        _stateNew.value = StatefulData.Success(apiResult._data)
                     }
 
                     ApiResult.Loading -> {
                         foodChannel.send(SD.Loading)
-//                        _stateNew.value = StatefulData.Loading
                     }
                 }
             }

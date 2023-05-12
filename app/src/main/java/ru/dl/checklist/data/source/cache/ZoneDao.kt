@@ -29,5 +29,5 @@ interface ZoneDao {
     fun delete(zone: ZoneEntity)
 
     @Query("select zone.* from checklist inner join zone on checklist.id=zone.checklistId where uuid = :uuid")
-    fun getZoneListByChecklist(uuid: String): Flow<List<ZoneEntity?>>
+    fun getZoneListByChecklist(uuid: String): Flow<List<ZoneEntity>>
 }

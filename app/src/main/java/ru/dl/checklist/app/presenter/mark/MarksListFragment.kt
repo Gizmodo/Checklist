@@ -26,7 +26,6 @@ class MarksListFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MarksListViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
 }

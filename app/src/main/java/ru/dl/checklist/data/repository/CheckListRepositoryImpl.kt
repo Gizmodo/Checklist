@@ -18,19 +18,19 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import ru.dl.checklist.app.di.module.IoDispatcher
+import ru.dl.checklist.app.ext.whenNotNullNorEmpty
 import ru.dl.checklist.app.utils.ApiResult
 import ru.dl.checklist.app.utils.HTTPConstants
-import ru.dl.checklist.data.mapper.ChecklistsMapper
-import ru.dl.checklist.data.model.entity.Mapper.toEntity
+import ru.dl.checklist.data.mapper.DtoToEntityMapper.toEntity
+import ru.dl.checklist.data.mapper.EntityToDomainMapper.toDomain
 import ru.dl.checklist.data.source.cache.ChecklistDao
 import ru.dl.checklist.data.source.cache.MarkDao
 import ru.dl.checklist.data.source.cache.ZoneDao
 import ru.dl.checklist.data.source.remote.RemoteApi
-import ru.dl.checklist.domain.model.ChecklistsDomain
-import ru.dl.checklist.domain.model.ZoneDomain2
+import ru.dl.checklist.domain.model.ChecklistDomain
+import ru.dl.checklist.domain.model.ZoneDomain
 import ru.dl.checklist.domain.repository.CheckListRepository
 import timber.log.Timber
 import java.net.UnknownHostException
@@ -43,37 +43,38 @@ class CheckListRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteApi,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : CheckListRepository {
-    override fun getCheckList(): Flow<ApiResult<ChecklistsDomain>> = flow {
+
+    override fun getChecklists(): Flow<ApiResult<List<ChecklistDomain>>> = flow {
         val myScope = CoroutineScope(Dispatchers.IO)
         val response = remoteDataSource.getChecklist()
-        response.suspendOnSuccess(ChecklistsMapper) {
-            // TODO: смапить dto в entity и сохранить в БД. Отдать наружу чеклисты (без дочерних) в виде Model(Domain)
-            val _this = this
-            var scopeResult: ApiResult<ChecklistsDomain> = ApiResult.Loading
+        response.suspendOnSuccess {
+            var scopeResult: ApiResult<List<ChecklistDomain>> = ApiResult.Loading
             val job = myScope.launch {
                 try {
-                    withContext(dispatcher) {
-                        checklists.forEach { checklist ->
-                            checklistDao.getByUUID(checklist.uuid)
-                                .whatIfNotNull(
-                                    whatIf = { },
-                                    whatIfNot = {
-                                        val newChecklistId =
-                                            checklistDao.insert(checklist.toEntity())
-                                        checklist.zones.forEach { zone ->
+                    data.checklists.whenNotNullNorEmpty { list ->
+                        list.forEach { checklist ->
+                            checklistDao.getByUUID(checklist.uuid.toString()).whatIfNotNull(
+                                whatIf = { },
+                                whatIfNot = {
+                                    val newChecklistId =
+                                        checklistDao.insert(checklist.toEntity())
+                                    checklist.zones.whenNotNullNorEmpty { zoneList ->
+                                        zoneList.forEach { zone ->
                                             val newZoneId =
                                                 zoneDao.insert(zone.toEntity(newChecklistId))
-                                            /*  zone.marks.forEach { mark ->
-                                                  markDao.insert(mark.toEntity(newZoneId))
-                                              }*/
-                                            zone.marks.map { it.toEntity(newZoneId) }
-                                                .onEach { markDao.insert(it) }
+                                            zone.marks.whenNotNullNorEmpty { markList ->
+                                                markList.map { it.toEntity(newZoneId) }
+                                                    .onEach { markDao.insert(it) }
+                                            }
                                         }
                                     }
-                                )
+                                }
+                            )
                         }
                     }
-                    scopeResult = ApiResult.Success(_this)
+                    val checklist = checklistDao.getAll()
+                    val returnList = checklist.map { it.toDomain() }
+                    scopeResult = ApiResult.Success(returnList)
                 } catch (e: Exception) {
                     Timber.e("An error occurred: " + e.message)
                     scopeResult = ApiResult.Error(e.message.toString())
@@ -121,10 +122,12 @@ class CheckListRepositoryImpl @Inject constructor(
     }
         .flowOn(dispatcher)
 
-    override fun getZonesByChecklist(uuid: String): Flow<List<ZoneDomain2>> {
+    override fun getZonesByChecklist(uuid: String): Flow<List<ZoneDomain>> {
         val inter = zoneDao.getZoneListByChecklist(uuid)
         val interMap = inter.map { list ->
-            list.mapNotNull { ChecklistsMapper.mapZoneEntityToDomain(it) } ?: emptyList()
+            list.map {
+                it.toDomain()
+            }
         }
         return interMap.flowOn(dispatcher)
     }

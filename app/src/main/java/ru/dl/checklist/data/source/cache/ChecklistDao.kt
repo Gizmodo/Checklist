@@ -11,7 +11,7 @@ import ru.dl.checklist.data.model.entity.ChecklistEntity
 @Dao
 interface ChecklistDao {
     @Query("SELECT * FROM checklist")
-    fun getAll(): List<ChecklistEntity>
+    suspend fun getAll(): List<ChecklistEntity>
 
     @Query("SELECT * FROM checklist WHERE uuid = :uuid")
     fun getByUUID(uuid: String): ChecklistEntity?

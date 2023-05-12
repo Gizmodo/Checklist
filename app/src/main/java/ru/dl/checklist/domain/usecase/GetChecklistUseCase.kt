@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetChecklistUseCase @Inject constructor(
     private val repository: CheckListRepository
 ) {
-    fun run() = repository.getCheckList()
+    fun run() = repository.getChecklists()
 }

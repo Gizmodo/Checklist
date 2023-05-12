@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class ChecklistDto(
     @SerializedName("uuid")
-    val uuid :String?,
+    val uuid: String?,
     @SerializedName("address")
     val address: String?,
     @SerializedName("audit_date")
@@ -17,5 +17,5 @@ data class ChecklistDto(
     @SerializedName("short_name")
     val shortName: String?,
     @SerializedName("zones")
-    val zones: List<ZoneDto?>?
+    val zones: List<ZoneDto>?
 )

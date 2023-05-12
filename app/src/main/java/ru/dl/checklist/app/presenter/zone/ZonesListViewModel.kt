@@ -8,8 +8,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import ru.dl.checklist.app.app.App
-import ru.dl.checklist.app.utils.SD
-import ru.dl.checklist.domain.model.ZoneDomain2
+import ru.dl.checklist.domain.model.ZoneDomain
 import ru.dl.checklist.domain.usecase.GetZoneListByChecklist
 import timber.log.Timber
 import javax.inject.Inject
@@ -22,8 +21,9 @@ class ZonesListViewModel : ViewModel() {
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Timber.e(throwable)
     }
-    private val _listChannel = Channel<List<ZoneDomain2>>()
+    private val _listChannel = Channel<List<ZoneDomain>>()
     val zoneListEvent = _listChannel.receiveAsFlow()
+
     @Inject
     lateinit var getZoneListByChecklist: dagger.Lazy<GetZoneListByChecklist>
     fun onEvent(event: ZoneListEvent) {

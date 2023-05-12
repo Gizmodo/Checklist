@@ -8,7 +8,7 @@ import ru.dl.checklist.app.di.module.DataBaseModule
 import ru.dl.checklist.app.di.module.NetworkModule
 import timber.log.Timber
 
-class App: Application() {
+class App : Application() {
     init {
         instance = this
     }
@@ -21,6 +21,7 @@ class App: Application() {
 
         lateinit var appComponent: AppComponent
     }
+
     override fun onCreate() {
         super.onCreate()
         Timber.plant(LineNumberDebugTree())
@@ -30,6 +31,7 @@ class App: Application() {
             .networkModule(NetworkModule)
             .build()
     }
+
     inner class LineNumberDebugTree : Timber.DebugTree() {
 
         override fun createStackElementTag(element: StackTraceElement): String {

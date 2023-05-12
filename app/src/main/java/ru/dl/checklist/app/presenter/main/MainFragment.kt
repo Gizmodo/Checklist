@@ -23,7 +23,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     }
     private var checklistAdapter = ChecklistAdapter(mutableListOf(), ::onItemClick)
 
-    private fun onItemClick(item: ChecklistDomain, position: Int) {
+    private fun onItemClick(item: ChecklistDomain) {
         navigateExt(MainFragmentDirections.actionMainFragmentToZonesListFragment(item.uuid))
     }
 
@@ -48,7 +48,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private fun initViewModelObservers() {
         collectLatestLifecycleFlow(viewModel.foodEvents) {
-           Timber.i("Start collect")
             when (it) {
                 is SD.Error -> {
                     Timber.e(it.msg)
@@ -59,8 +58,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 }
 
                 is SD.Success -> {
-                    Timber.i("Загружено чеклистов: ${it.result.checklists.count()} шт.")
-                    checklistAdapter.updateList(it.result.checklists)
+                    Timber.i("Загружено чеклистов: ${it.result.count()} шт.")
+                    checklistAdapter.updateList(it.result)
                 }
             }
         }

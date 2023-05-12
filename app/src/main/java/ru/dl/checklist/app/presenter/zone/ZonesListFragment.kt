@@ -40,7 +40,6 @@ class ZonesListFragment : Fragment(R.layout.fragment_zones_list) {
     }
 
     private fun initUI() {
-        // TODO("Not yet implemented")
     }
 
 }

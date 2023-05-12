@@ -8,7 +8,7 @@ import ru.dl.checklist.domain.model.ChecklistDomain
 
 class ChecklistAdapter(
     private val list: MutableList<ChecklistDomain>,
-    private val onItemClick: (ChecklistDomain, Int) -> Unit
+    private val onItemClick: (ChecklistDomain) -> Unit
 ) : RecyclerView.Adapter<ChecklistAdapter.ChecklistViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChecklistViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -36,7 +36,7 @@ class ChecklistAdapter(
             txtDate.text = item.auditDate.value
             txtChecker.text = item.checker.value
             txtSenior.text = item.senior.value
-            root.setOnClickListener { onItemClick(item, adapterPosition) }
+            root.setOnClickListener { onItemClick(item) }
         }
     }
 }
