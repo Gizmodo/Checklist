@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import ru.dl.checklist.app.di.module.IoDispatcher
 import ru.dl.checklist.app.ext.whenNotNullNorEmpty
@@ -138,4 +139,21 @@ class CheckListRepositoryImpl @Inject constructor(
         return interMap.flowOn(dispatcher)
     }
 
+    override suspend fun changeAnswer(mark: MarkDomain) {
+        withContext(dispatcher) {
+            markDao.updateMarkAnswer(
+                markId = mark.id,
+                answer = mark.answer
+            )
+        }
+    }
+
+    override suspend fun changeComment(mark: MarkDomain) {
+        withContext(dispatcher) {
+            markDao.updateMarkComment(
+                markId = mark.id,
+                comment = mark.comment
+            )
+        }
+    }
 }

@@ -1,6 +1,6 @@
 package ru.dl.checklist.domain.model.valueclasses
 
-object valueclasses {
+object ValueClasses {
 
     @JvmInline
     value class Address(val value: String)

@@ -20,7 +20,9 @@ android {
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
-
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -54,29 +56,30 @@ detekt {
     reportsDir = file("reports_detekt")
 }
 dependencies {
-    implementation(libs.legacy.support.v4)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
     detektPlugins(libs.detekt.formatting)
     detektPlugins(libs.detekt.plugin)
+    implementation (libs.glide)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.arrow.optics)
     implementation(libs.bundles.arrow)
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.room)
     implementation(libs.dagger)
+    implementation(libs.legacy.support.v4)
     implementation(libs.material)
     implementation(libs.sandwich)
-    implementation(libs.whatif)
     implementation(libs.timber)
+    implementation(libs.whatif)
     kapt(libs.dagger.compiler)
     ksp(libs.androidx.room.compiler)
     ksp(libs.arrow.optics.ksp.plugin)
     testImplementation(libs.junit)
-    implementation(libs.arrow.optics)
 }
