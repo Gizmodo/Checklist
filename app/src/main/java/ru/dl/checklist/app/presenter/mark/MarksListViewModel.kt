@@ -7,12 +7,14 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import ru.dl.checklist.app.app.App
+import ru.dl.checklist.domain.model.Answer
 import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.usecase.GetMarkListByZone
 import ru.dl.checklist.domain.usecase.SetMarkAnswerUseCase
@@ -31,7 +33,7 @@ class MarksListViewModel : ViewModel() {
         Timber.e(throwable)
     }
     private val _listChannel = Channel<List<MarkDomain>>()
-    val markListEvent = _listChannel.receiveAsFlow()
+    val markListEvent = _listChannel.receiveAsFlow().distinctUntilChanged()
 
     @Inject
     lateinit var getMarkListByZoneLazy: dagger.Lazy<GetMarkListByZone>
@@ -43,26 +45,25 @@ class MarksListViewModel : ViewModel() {
     lateinit var setMarkCommentUseCase: dagger.Lazy<SetMarkCommentUseCase>
     fun onEvent(event: MarkListEvent) = when (event) {
         is MarkListEvent.LoadMarkListByZone -> loadMarkList()
-        is MarkListEvent.ChangeAnswer -> updateMark(event.mark)
+        is MarkListEvent.ChangeAnswer -> updateMark(event.markId, event.answer)
         is MarkListEvent.SetZoneId -> zoneId = event.zoneId
-        is MarkListEvent.ChangeComment -> updateComment(event.mark)
+        is MarkListEvent.ChangeComment -> updateComment(event.markId, event.comment)
+        is MarkListEvent.ChangeAttachment -> sendFileRequest(event.markId, event.bitmap)
     }
 
-    private fun updateComment(mark: MarkDomain) {
+    private fun updateMark(markId: Long, answer: Answer) {
         viewModelScope.launch(exceptionHandler) {
-            setMarkCommentUseCase.get().run(mark)
-            loadMarkList()
+            setMarkAnswerUseCase.get().run(markId, answer)
         }
     }
 
-    private fun updateMark(mark: MarkDomain) {
+    private fun updateComment(markId: Long, comment: String) {
         viewModelScope.launch(exceptionHandler) {
-            setMarkAnswerUseCase.get().run(mark)
-            //loadMarkList()
+            setMarkCommentUseCase.get().run(markId, comment)
         }
     }
 
-    fun sendFileRequest(image: Bitmap) {
+    private fun sendFileRequest(markId: Long, image: Bitmap) {
         val stream = ByteArrayOutputStream()
         image.compress(Bitmap.CompressFormat.JPEG, 80, stream)
         val byteArray = stream.toByteArray()
@@ -70,9 +71,10 @@ class MarksListViewModel : ViewModel() {
             "photo[content]", "photo",
             byteArray.toRequestBody("image/*".toMediaTypeOrNull(), 0, byteArray.size)
         )
-
+        Timber.i("Размер изображения: ${byteArray.size}")
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                // TODO: Сохранять изображение в БД
                 //questGoApi.sendFile(body)
             } catch (e: java.lang.Exception) {
 

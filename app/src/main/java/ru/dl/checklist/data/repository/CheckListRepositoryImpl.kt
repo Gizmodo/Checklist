@@ -30,6 +30,7 @@ import ru.dl.checklist.data.source.cache.ChecklistDao
 import ru.dl.checklist.data.source.cache.MarkDao
 import ru.dl.checklist.data.source.cache.ZoneDao
 import ru.dl.checklist.data.source.remote.RemoteApi
+import ru.dl.checklist.domain.model.Answer
 import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.ZoneDomain
@@ -139,21 +140,11 @@ class CheckListRepositoryImpl @Inject constructor(
         return interMap.flowOn(dispatcher)
     }
 
-    override suspend fun changeAnswer(mark: MarkDomain) {
-        withContext(dispatcher) {
-            markDao.updateMarkAnswer(
-                markId = mark.id,
-                answer = mark.answer
-            )
-        }
+    override suspend fun changeAnswer(markId: Long, answer: Answer) {
+        withContext(dispatcher) { markDao.updateMarkAnswer(markId, answer) }
     }
 
-    override suspend fun changeComment(mark: MarkDomain) {
-        withContext(dispatcher) {
-            markDao.updateMarkComment(
-                markId = mark.id,
-                comment = mark.comment
-            )
-        }
+    override suspend fun changeComment(markId: Long, comment: String) {
+        withContext(dispatcher) { markDao.updateMarkComment(markId, comment) }
     }
 }

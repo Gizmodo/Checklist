@@ -1,6 +1,5 @@
 package ru.dl.checklist.data.mapper
 
-import ru.dl.checklist.app.ext.findBy
 import ru.dl.checklist.data.model.entity.ChecklistEntity
 import ru.dl.checklist.data.model.entity.MarkEntity
 import ru.dl.checklist.data.model.entity.ZoneEntity
@@ -25,8 +24,6 @@ object EntityToDomainMapper {
 
     fun ZoneEntity.toDomain(): ZoneDomain = ZoneDomain(id, zone)
 
-    fun MarkEntity.toDomain(): MarkDomain {
-        val answerValue = (Answer::value findBy this.answer) ?: Answer.UNDEFINED
-        return MarkDomain(id, points, title, answerValue, comment)
-    }
+    fun MarkEntity.toDomain(): MarkDomain =
+        MarkDomain(id, points, title, answer ?: Answer.UNDEFINED, comment)
 }

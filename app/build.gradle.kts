@@ -56,6 +56,7 @@ detekt {
     reportsDir = file("reports_detekt")
 }
 dependencies {
+    testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
     detektPlugins(libs.detekt.formatting)

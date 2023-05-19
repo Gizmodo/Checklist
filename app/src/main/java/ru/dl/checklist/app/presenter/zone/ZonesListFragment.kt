@@ -29,7 +29,6 @@ class ZonesListFragment : Fragment(R.layout.fragment_zones_list) {
     private var zoneListAdapter = ZoneListAdapter(mutableListOf(), ::onItemClick)
 
     private fun onItemClick(zone: ZoneDomain) {
-        Timber.i("Select zone $zone")
         navigateExt(ZonesListFragmentDirections.actionZonesListFragmentToMarksListFragment(zone.id.toInt()))
     }
 

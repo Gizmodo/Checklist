@@ -19,9 +19,7 @@ import ru.dl.checklist.data.source.cache.converters.BitmapConverter
         MarkEntity::class,
         MediaEntity::class
     ],
-    autoMigrations = [
-
-    ],
+    autoMigrations = [],
     version = 1,
     exportSchema = true,
 )

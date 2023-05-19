@@ -17,6 +17,7 @@ glide = "4.15.1"
 gradle = "8.2.0-alpha04"
 gson = "2.10.1"
 junit = "4.13.2"
+junitJupiter = "5.9.2"
 junitJupiterApi = "5.9.3"
 kotlinVersion = "1.8.21"
 kotlinxCoroutinesCore = "1.7.1"
@@ -25,7 +26,7 @@ retrofitKotlinxSerializationJson = "1.0.0"
 kspVersion = "1.8.21-1.0.11"
 leakcanaryAndroid = "2.10"
 lifecycle = "2.6.1"
-material = "1.10.0-alpha02"
+material = "1.10.0-alpha03"
 navigation = "2.5.3"
 okhttp = "5.0.0-alpha.11"
 retrofit = "2.9.0"
@@ -79,6 +80,7 @@ glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { module = "junit:junit", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }

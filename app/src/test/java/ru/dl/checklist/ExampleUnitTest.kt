@@ -2,15 +2,56 @@ package ru.dl.checklist
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.jupiter.api.assertAll
+import ru.dl.checklist.app.ext.findBy
+import ru.dl.checklist.data.mapper.EntityToDomainMapper.toDomain
+import ru.dl.checklist.data.model.entity.MarkEntity
+import ru.dl.checklist.domain.model.Answer
+import timber.log.Timber
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 class ExampleUnitTest {
     @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+    fun `mark mapping`() {
+        val entity = MarkEntity(
+            id = 0,
+            zoneId = 0,
+            points = 0,
+            title = "This is a title",
+            answer = Answer.YES,
+            comment = "Some comment",
+            image = null
+        )
+        val domain = entity.toDomain()
+        Timber.i(domain.toString())
+        val answerValue = (Answer::value findBy domain.answer.value) ?: Answer.UNDEFINED
+
+        assertAll(
+            { assertEquals(true, entity.answer) },
+            { assertEquals(Answer.YES, answerValue) }
+        )
+    }
+
+    @Test
+    fun `entity false to model`() {
+        val answerDB = false
+        val answerModel = (Answer::value findBy answerDB) ?: Answer.UNDEFINED
+        Timber.Forest.i(answerModel.toString())
+        assertEquals(Answer.NO, answerModel)
+    }
+
+    @Test
+    fun `entity true to model`() {
+        val answerDB = true
+        val answerModel = (Answer::value findBy answerDB) ?: Answer.UNDEFINED
+        Timber.Forest.i(answerModel.toString())
+        assertEquals(Answer.YES, answerModel)
+    }
+
+    @Test
+    fun `entity null to model`() {
+        val answerDB = null
+        val answerModel = (Answer::value findBy answerDB) ?: Answer.UNDEFINED
+        Timber.Forest.i(answerModel.toString())
+        assertEquals(Answer.UNDEFINED, answerModel)
     }
 }

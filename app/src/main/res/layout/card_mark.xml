@@ -25,6 +25,19 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Холодильное/морозильное оборудование (холодильные/морозильные столы, камеры в цехе) исправное, чистое, температурный режим соответствует норме, ведется график температурных режимов.+0° + 2°, -18°" />
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txtMarkComment"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:textStyle="italic|bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtMarkTitle"
+            tools:text="Здесь выводится комментарий к показателю" />
+
         <RadioGroup
             android:id="@+id/tbMarkAnswer"
             android:layout_width="wrap_content"
@@ -33,7 +46,7 @@
             android:gravity="end"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tilMarkComment">
+            app:layout_constraintTop_toBottomOf="@+id/txtMarkComment">
 
             <RadioButton
                 android:id="@+id/btnYes"
@@ -48,32 +61,25 @@
                 android:text="@string/no" />
         </RadioGroup>
 
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilMarkComment"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtMarkTitle">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtMarkComment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Комментарий"
-                android:inputType="textMultiLine" />
-        </com.google.android.material.textfield.TextInputLayout>
-
         <Button
             android:id="@+id/btnAttach"
             style="?attr/materialIconButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            app:icon="@drawable/baseline_attach_file_24"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tilMarkComment"
-            app:icon="@drawable/baseline_attach_file_24" />
+            app:layout_constraintTop_toBottomOf="@+id/txtMarkComment" />
+
+        <Button
+            android:id="@+id/btnComment"
+            style="?attr/materialIconButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:icon="@drawable/baseline_add_comment_24"
+            app:layout_constraintStart_toEndOf="@+id/btnAttach"
+            app:layout_constraintTop_toBottomOf="@+id/txtMarkComment" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
