@@ -16,6 +16,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import ru.dl.checklist.app.app.App
 import ru.dl.checklist.domain.model.Answer
 import ru.dl.checklist.domain.model.MarkDomain
+import ru.dl.checklist.domain.usecase.AddPhotoToMarkUseCase
 import ru.dl.checklist.domain.usecase.GetMarkListByZone
 import ru.dl.checklist.domain.usecase.SetMarkAnswerUseCase
 import ru.dl.checklist.domain.usecase.SetMarkCommentUseCase
@@ -43,6 +44,9 @@ class MarksListViewModel : ViewModel() {
 
     @Inject
     lateinit var setMarkCommentUseCase: dagger.Lazy<SetMarkCommentUseCase>
+
+    @Inject
+    lateinit var addPhotoToMarkUseCase: dagger.Lazy<AddPhotoToMarkUseCase>
     fun onEvent(event: MarkListEvent) = when (event) {
         is MarkListEvent.LoadMarkListByZone -> loadMarkList()
         is MarkListEvent.ChangeAnswer -> updateMark(event.markId, event.answer)
@@ -74,10 +78,9 @@ class MarksListViewModel : ViewModel() {
         Timber.i("Размер изображения: ${byteArray.size}")
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                // TODO: Сохранять изображение в БД
-                //questGoApi.sendFile(body)
-            } catch (e: java.lang.Exception) {
-
+                addPhotoToMarkUseCase.get().run(markId, byteArray)
+            } catch (e: Exception) {
+                Timber.e(e)
             }
         }
     }

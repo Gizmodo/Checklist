@@ -26,8 +26,10 @@ import ru.dl.checklist.app.utils.ApiResult
 import ru.dl.checklist.app.utils.HTTPConstants
 import ru.dl.checklist.data.mapper.DtoToEntityMapper.toEntity
 import ru.dl.checklist.data.mapper.EntityToDomainMapper.toDomain
+import ru.dl.checklist.data.model.entity.MediaEntity
 import ru.dl.checklist.data.source.cache.ChecklistDao
 import ru.dl.checklist.data.source.cache.MarkDao
+import ru.dl.checklist.data.source.cache.MediaDao
 import ru.dl.checklist.data.source.cache.ZoneDao
 import ru.dl.checklist.data.source.remote.RemoteApi
 import ru.dl.checklist.domain.model.Answer
@@ -43,6 +45,7 @@ class CheckListRepositoryImpl @Inject constructor(
     private val checklistDao: ChecklistDao,
     private val zoneDao: ZoneDao,
     private val markDao: MarkDao,
+    private val mediaDao: MediaDao,
     private val remoteDataSource: RemoteApi,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : CheckListRepository {
@@ -146,5 +149,13 @@ class CheckListRepositoryImpl @Inject constructor(
 
     override suspend fun changeComment(markId: Long, comment: String) {
         withContext(dispatcher) { markDao.updateMarkComment(markId, comment) }
+    }
+
+    override suspend fun addPhoto(markId: Long, byteArray: ByteArray) {
+        withContext(dispatcher) {
+            val mediaEntity = MediaEntity(markId = markId, media = byteArray)
+            val res = mediaDao.insert(mediaEntity)
+            Timber.i("mediaId: $res")
+        }
     }
 }

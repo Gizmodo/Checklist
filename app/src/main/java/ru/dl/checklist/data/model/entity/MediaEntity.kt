@@ -3,16 +3,20 @@ package ru.dl.checklist.data.model.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "media", foreignKeys = [
         ForeignKey(
-            entity = ZoneEntity::class,
+            entity = MarkEntity::class,
             parentColumns = ["id"],
             childColumns = ["markId"],
             onDelete = CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["markId"])
     ]
 )
 data class MediaEntity(

@@ -13,4 +13,5 @@ interface CheckListRepository {
     fun getMarksByZone(zoneId: Long): Flow<List<MarkDomain>>
     suspend fun changeAnswer(markId: Long, answer: Answer)
     suspend fun changeComment(markId: Long, comment: String)
+    suspend fun addPhoto(markId: Long, byteArray: ByteArray)
 }

@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 2,
-    "identityHash": "d46cb890ce68faf1182956bc9312d3ba",
+    "version": 3,
+    "identityHash": "7df42c1f7d4a81a06a7da2878041d08f",
     "entities": [
       {
         "tableName": "checklist",
@@ -188,7 +188,7 @@
       },
       {
         "tableName": "media",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `markId` INTEGER NOT NULL, `media` BLOB, FOREIGN KEY(`markId`) REFERENCES `zone`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `markId` INTEGER NOT NULL, `media` BLOB, FOREIGN KEY(`markId`) REFERENCES `mark`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -228,7 +228,7 @@
         ],
         "foreignKeys": [
           {
-            "table": "zone",
+            "table": "mark",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
@@ -244,7 +244,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd46cb890ce68faf1182956bc9312d3ba')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7df42c1f7d4a81a06a7da2878041d08f')"
     ]
   }
 }
