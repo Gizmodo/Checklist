@@ -26,7 +26,7 @@ import ru.dl.checklist.app.ext.viewLifecycleLazy
 import ru.dl.checklist.databinding.DialogCommentBinding
 import ru.dl.checklist.databinding.FragmentMarksListBinding
 import ru.dl.checklist.domain.model.Answer
-import ru.dl.checklist.domain.model.MarkDomain
+import ru.dl.checklist.domain.model.MarkDomainWithCount
 import timber.log.Timber
 
 class MarksListFragment : Fragment(R.layout.fragment_marks_list) {
@@ -42,12 +42,12 @@ class MarksListFragment : Fragment(R.layout.fragment_marks_list) {
         onClickAddPhoto = ::onClickAddPhoto
     )
 
-    private fun onClickAddPhoto(item: MarkDomain) {
+    private fun onClickAddPhoto(item: MarkDomainWithCount) {
         itemId = item.id
         loadFileFromDevice()
     }
 
-    private fun onClickAddComment(item: MarkDomain) {
+    private fun onClickAddComment(item: MarkDomainWithCount) {
         val builder = MaterialAlertDialogBuilder(requireContext())
         val bind = DialogCommentBinding.inflate(layoutInflater)
         bind.edtComment.setText(item.comment)

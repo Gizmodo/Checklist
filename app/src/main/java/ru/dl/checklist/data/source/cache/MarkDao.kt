@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import ru.dl.checklist.data.model.entity.MarkEntity
 import ru.dl.checklist.domain.model.Answer
+import ru.dl.checklist.domain.model.MarkDomainWithCount
 
 @Dao
 interface MarkDao {
@@ -37,4 +38,16 @@ interface MarkDao {
 
     @Query("UPDATE mark SET comment = :comment WHERE id = :markId")
     fun updateMarkComment(markId: Long, comment: String)
+
+    @Query(
+        "SELECT mark.*,\n" +
+                "       count(media.id) as count\n" +
+                "  FROM mark\n" +
+                "       LEFT JOIN\n" +
+                "       media ON mark.id = media.markId\n" +
+                " WHERE mark.zoneId = :zoneId\n" +
+                " GROUP BY mark.id"
+    )
+    fun getMarkListByZoneWithCount(zoneId: Long): Flow<List<MarkDomainWithCount>>
+
 }

@@ -35,6 +35,7 @@ import ru.dl.checklist.data.source.remote.RemoteApi
 import ru.dl.checklist.domain.model.Answer
 import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
+import ru.dl.checklist.domain.model.MarkDomainWithCount
 import ru.dl.checklist.domain.model.ZoneDomain
 import ru.dl.checklist.domain.repository.CheckListRepository
 import timber.log.Timber
@@ -141,6 +142,11 @@ class CheckListRepositoryImpl @Inject constructor(
             list.map { it.toDomain() }
         }
         return interMap.flowOn(dispatcher)
+    }
+
+    override fun getMarksByZoneWithCount(zoneId: Long): Flow<List<MarkDomainWithCount>> {
+        val inter = markDao.getMarkListByZoneWithCount(zoneId)
+        return inter.flowOn(dispatcher)
     }
 
     override suspend fun changeAnswer(markId: Long, answer: Answer) {

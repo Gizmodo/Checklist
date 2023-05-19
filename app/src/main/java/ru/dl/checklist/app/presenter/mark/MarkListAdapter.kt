@@ -1,27 +1,38 @@
 package ru.dl.checklist.app.presenter.mark
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.dl.checklist.databinding.CardMarkBinding
 import ru.dl.checklist.domain.model.Answer
-import ru.dl.checklist.domain.model.MarkDomain
+import ru.dl.checklist.domain.model.MarkDomainWithCount
 
 class MarkListAdapter(
     private val onCardUIEvent: (MarkCardUIEvent) -> Unit,
     private val onClickAnswer: (markId: Long, answer: Answer) -> Unit,
-    private val onClickAddComment: (item: MarkDomain) -> Unit,
-    private val onClickAddPhoto: (item: MarkDomain) -> Unit
+    private val onClickAddComment: (item: MarkDomainWithCount) -> Unit,
+    private val onClickAddPhoto: (item: MarkDomainWithCount) -> Unit
 ) : RecyclerView.Adapter<MarkListAdapter.MarkListViewHolder>() {
-    private val markList = mutableListOf<MarkDomain>()
+    private val markList = mutableListOf<MarkDomainWithCount>()
 
     inner class MarkListViewHolder(private val binding: CardMarkBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: MarkDomain): CardMarkBinding {
+        fun bind(item: MarkDomainWithCount): CardMarkBinding {
             //  UI
             binding.txtMarkTitle.text = item.title
             binding.txtMarkComment.text = item.comment
 
+            when {
+                item.count > 0 -> {
+                    binding.txtCount.visibility = View.VISIBLE
+                    binding.txtCount.text = item.count.toString()
+                }
+
+                else -> {
+                    binding.txtCount.visibility = View.GONE
+                }
+            }
             when (item.answer) {
                 Answer.YES -> binding.btnYes.isChecked = true
                 Answer.NO -> binding.btnNo.isChecked = true
@@ -75,7 +86,7 @@ class MarkListAdapter(
         }*/
     }
 
-    fun updateList(newItems: List<MarkDomain>) {
+    fun updateList(newItems: List<MarkDomainWithCount>) {
         markList.clear()
         markList.addAll(newItems)
         notifyDataSetChanged()

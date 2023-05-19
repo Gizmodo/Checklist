@@ -23,15 +23,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Холодильное/морозильное оборудование (холодильные/морозильные столы, камеры в цехе) исправное, чистое, температурный режим соответствует норме, ведется график температурных режимов.+0° + 2°, -18°" />
+            tools:text="Здесь выводится текст показателя" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/txtMarkComment"
             style="@style/TextAppearance.Material3.BodyMedium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:textStyle="italic|bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -61,25 +61,45 @@
                 android:text="@string/no" />
         </RadioGroup>
 
-        <Button
-            android:id="@+id/btnAttach"
-            style="?attr/materialIconButtonOutlinedStyle"
+        <RelativeLayout
+            android:id="@+id/badgeOuter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            app:icon="@drawable/baseline_attach_file_24"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtMarkComment" />
+            app:layout_constraintTop_toBottomOf="@+id/txtMarkComment">
+
+            <RelativeLayout
+                android:id="@+id/badgeInner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/btnAttach"
+                    style="?attr/materialIconButtonFilledStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/baseline_attach_file_24" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/txtCount"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignRight="@id/badgeInner"
+                android:background="@drawable/badge_background"
+                android:textColor="#FFFFFF"
+                android:visibility="gone" />
+        </RelativeLayout>
 
         <Button
             android:id="@+id/btnComment"
-            style="?attr/materialIconButtonOutlinedStyle"
+            style="?attr/materialIconButtonFilledStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             app:icon="@drawable/baseline_add_comment_24"
-            app:layout_constraintStart_toEndOf="@+id/btnAttach"
+            app:layout_constraintStart_toEndOf="@+id/badgeOuter"
             app:layout_constraintTop_toBottomOf="@+id/txtMarkComment" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -15,7 +15,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import ru.dl.checklist.app.app.App
 import ru.dl.checklist.domain.model.Answer
-import ru.dl.checklist.domain.model.MarkDomain
+import ru.dl.checklist.domain.model.MarkDomainWithCount
 import ru.dl.checklist.domain.usecase.AddPhotoToMarkUseCase
 import ru.dl.checklist.domain.usecase.GetMarkListByZone
 import ru.dl.checklist.domain.usecase.SetMarkAnswerUseCase
@@ -33,7 +33,7 @@ class MarksListViewModel : ViewModel() {
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Timber.e(throwable)
     }
-    private val _listChannel = Channel<List<MarkDomain>>()
+    private val _listChannel = Channel<List<MarkDomainWithCount>>()
     val markListEvent = _listChannel.receiveAsFlow().distinctUntilChanged()
 
     @Inject
@@ -87,7 +87,7 @@ class MarksListViewModel : ViewModel() {
 
     private fun loadMarkList() {
         viewModelScope.launch(exceptionHandler) {
-            getMarkListByZoneLazy.get().run(zoneId).collectLatest { data ->
+            getMarkListByZoneLazy.get().runWithCount(zoneId).collectLatest { data ->
                 _listChannel.send(data)
             }
         }
