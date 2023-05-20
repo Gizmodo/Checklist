@@ -22,7 +22,7 @@ object EntityToDomainMapper {
         )
     }
 
-    fun ZoneEntity.toDomain(): ZoneDomain = ZoneDomain(id, zone)
+    fun ZoneEntity.toDomain(): ZoneDomain = ZoneDomain(id, zone, 0.0)
 
     fun MarkEntity.toDomain(): MarkDomain =
         MarkDomain(id, points, title, answer ?: Answer.UNDEFINED, comment)

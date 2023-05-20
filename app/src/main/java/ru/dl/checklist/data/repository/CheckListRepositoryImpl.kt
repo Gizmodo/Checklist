@@ -130,10 +130,7 @@ class CheckListRepositoryImpl @Inject constructor(
 
     override fun getZonesByChecklist(uuid: String): Flow<List<ZoneDomain>> {
         val inter = zoneDao.getZoneListByChecklist(uuid)
-        val interMap = inter.map { list ->
-            list.map { it.toDomain() }
-        }
-        return interMap.flowOn(dispatcher)
+        return inter.flowOn(dispatcher)
     }
 
     override fun getMarksByZone(zoneId: Long): Flow<List<MarkDomain>> {
