@@ -80,8 +80,7 @@ class CheckListRepositoryImpl @Inject constructor(
                         }
                     }
                     val checklist = checklistDao.getAll()
-                    val returnList = checklist.map { it.toDomain() }
-                    scopeResult = ApiResult.Success(returnList)
+                    scopeResult = ApiResult.Success(checklist)
                 } catch (e: Exception) {
                     Timber.e("An error occurred: " + e.message)
                     scopeResult = ApiResult.Error(e.message.toString())

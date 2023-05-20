@@ -7,18 +7,18 @@ import ru.dl.checklist.domain.model.Answer
 import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.ZoneDomain
-import ru.dl.checklist.domain.model.valueclasses.ValueClasses
 
 object EntityToDomainMapper {
     fun ChecklistEntity.toDomain(): ChecklistDomain {
         return ChecklistDomain(
             id = id,
             uuid = uuid,
-            address = ValueClasses.Address(address),
-            auditDate = ValueClasses.AuditDate(auditDate),
-            checker = ValueClasses.Checker(checker),
-            senior = ValueClasses.Senior(senior),
-            shortName = ValueClasses.ShortName(shortName)
+            address = address,
+            auditDate = auditDate,
+            checker = checker,
+            senior = senior,
+            shortName = shortName,
+            0.0
         )
     }
 
