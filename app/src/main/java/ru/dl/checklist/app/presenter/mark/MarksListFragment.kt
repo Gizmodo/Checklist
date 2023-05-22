@@ -25,7 +25,6 @@ import ru.dl.checklist.app.ext.getViewModel
 import ru.dl.checklist.app.ext.viewLifecycleLazy
 import ru.dl.checklist.databinding.DialogCommentBinding
 import ru.dl.checklist.databinding.FragmentMarksListBinding
-import ru.dl.checklist.domain.model.Answer
 import ru.dl.checklist.domain.model.MarkDomainWithCount
 import timber.log.Timber
 
@@ -37,7 +36,7 @@ class MarksListFragment : Fragment(R.layout.fragment_marks_list) {
     private var itemId: Long = 0
     private var markListAdapter = MarkListAdapter(
         onCardUIEvent = ::onCardUIEvent,
-        onClickAnswer = ::onClickAnswer,
+        onChangeAnswer = ::onClickAnswer,
         onClickAddComment = ::onClickAddComment,
         onClickAddPhoto = ::onClickAddPhoto
     )
@@ -68,7 +67,8 @@ class MarksListFragment : Fragment(R.layout.fragment_marks_list) {
         dialog = builder.show()
     }
 
-    private fun onClickAnswer(markId: Long, answer: Answer) {
+    private fun onClickAnswer(markId: Long, answer: Float) {
+
         Timber.i("Select answer ${answer} for id ${markId} ")
         viewModel.onEvent(MarkListEvent.ChangeAnswer(markId, answer))
     }

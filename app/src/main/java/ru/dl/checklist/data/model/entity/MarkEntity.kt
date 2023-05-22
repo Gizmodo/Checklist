@@ -5,7 +5,6 @@ import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import ru.dl.checklist.domain.model.Answer
 
 @Entity(
     tableName = "mark", foreignKeys = [
@@ -25,6 +24,6 @@ data class MarkEntity(
     val zoneId: Long,
     val points: Int,
     val title: String,
-    val answer: Answer?,
+    val answer: Float?,
     val comment: String
 )

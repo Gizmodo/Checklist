@@ -34,7 +34,6 @@ import ru.dl.checklist.data.source.cache.MarkDao
 import ru.dl.checklist.data.source.cache.MediaDao
 import ru.dl.checklist.data.source.cache.ZoneDao
 import ru.dl.checklist.data.source.remote.RemoteApi
-import ru.dl.checklist.domain.model.Answer
 import ru.dl.checklist.domain.model.BackendResponseDomain
 import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
@@ -118,7 +117,7 @@ class CheckListRepositoryImpl @Inject constructor(
         return inter.flowOn(dispatcher)
     }
 
-    override suspend fun changeAnswer(markId: Long, answer: Answer) {
+    override suspend fun changeAnswer(markId: Long, answer: Float) {
         withContext(dispatcher) { markDao.updateMarkAnswer(markId, answer) }
     }
 

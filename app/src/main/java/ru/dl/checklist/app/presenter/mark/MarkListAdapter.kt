@@ -5,12 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.dl.checklist.databinding.CardMarkBinding
-import ru.dl.checklist.domain.model.Answer
 import ru.dl.checklist.domain.model.MarkDomainWithCount
 
 class MarkListAdapter(
     private val onCardUIEvent: (MarkCardUIEvent) -> Unit,
-    private val onClickAnswer: (markId: Long, answer: Answer) -> Unit,
+    private val onChangeAnswer: (markId: Long, answer: Float) -> Unit,
     private val onClickAddComment: (item: MarkDomainWithCount) -> Unit,
     private val onClickAddPhoto: (item: MarkDomainWithCount) -> Unit
 ) : RecyclerView.Adapter<MarkListAdapter.MarkListViewHolder>() {
@@ -22,7 +21,7 @@ class MarkListAdapter(
             //  UI
             binding.txtMarkTitle.text = item.title
             binding.txtMarkComment.text = item.comment
-
+            binding.slider.value = item.answer.toFloat()
             when {
                 item.count > 0 -> {
                     binding.txtCount.visibility = View.VISIBLE
@@ -33,15 +32,8 @@ class MarkListAdapter(
                     binding.txtCount.visibility = View.GONE
                 }
             }
-            when (item.answer) {
-                Answer.YES -> binding.btnYes.isChecked = true
-                Answer.NO -> binding.btnNo.isChecked = true
-                Answer.UNDEFINED -> binding.tbMarkAnswer.clearCheck()
-            }
 
             //  Click actions
-            binding.btnYes.setOnClickListener { onClickAnswer(item.id, Answer.YES) }
-            binding.btnNo.setOnClickListener { onClickAnswer(item.id, Answer.NO) }
             binding.btnComment.setOnClickListener { onClickAddComment(item) }
             binding.btnAttach.setOnClickListener { onClickAddPhoto(item) }
 

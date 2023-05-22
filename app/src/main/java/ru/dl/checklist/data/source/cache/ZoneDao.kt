@@ -30,7 +30,7 @@ interface ZoneDao {
     fun delete(zone: ZoneEntity)
 
     @Query(
-        "SELECT zone.id, zone.zone, round(ifnull(sum(points * answer), 0) / sum(CAST (points AS REAL) ), 4) * 100 AS percent FROM zone\n" +
+        "SELECT zone.id, zone.zone, round(ifnull(sum(points * answer), 0) / sum(CAST (points AS REAL) ), 4) * 10 AS percent FROM zone\n" +
                 "       LEFT JOIN\n" +
                 "       mark ON mark.zoneId = zone.id\n" +
                 "       left join \n" +

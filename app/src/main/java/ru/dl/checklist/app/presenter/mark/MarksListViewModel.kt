@@ -14,7 +14,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import ru.dl.checklist.app.app.App
-import ru.dl.checklist.domain.model.Answer
 import ru.dl.checklist.domain.model.MarkDomainWithCount
 import ru.dl.checklist.domain.usecase.AddPhotoToMarkUseCase
 import ru.dl.checklist.domain.usecase.GetMarkListByZone
@@ -55,7 +54,7 @@ class MarksListViewModel : ViewModel() {
         is MarkListEvent.ChangeAttachment -> sendFileRequest(event.markId, event.bitmap)
     }
 
-    private fun updateMark(markId: Long, answer: Answer) {
+    private fun updateMark(markId: Long, answer: Float) {
         viewModelScope.launch(exceptionHandler) {
             setMarkAnswerUseCase.get().run(markId, answer)
         }

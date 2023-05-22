@@ -8,4 +8,8 @@
     <string name="cancel">Отмена</string>
     <string name="ok">OK</string>
     <string name="dialog_comment_title">Комментарий</string>
+    <string name="speakableSlider">Слайдер оценки</string>
+    <string name="speakablePKD">ПКД</string>
+    <string name="speakableComment">Комментарий</string>
+    <string name="speakableAttach">Фотография</string>
 </resources>

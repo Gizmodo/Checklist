@@ -14,6 +14,22 @@
         android:layout_height="match_parent"
         android:padding="8dp">
 
+        <com.google.android.material.slider.Slider
+            android:id="@+id/slider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/speakableSlider"
+            android:stepSize="1"
+            app:labelBehavior="withinBounds"
+            android:labelFor="@+id/txtSlider"
+            android:valueFrom="0"
+            android:valueTo="10"
+            android:value="5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnComment" />
+
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/txtMarkTitle"
             style="@style/TextAppearance.Material3.BodyLarge"
@@ -38,29 +54,6 @@
             app:layout_constraintTop_toBottomOf="@+id/txtMarkTitle"
             tools:text="Здесь выводится комментарий к показателю" />
 
-        <RadioGroup
-            android:id="@+id/tbMarkAnswer"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            android:gravity="end"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtMarkComment">
-
-            <RadioButton
-                android:id="@+id/btnYes"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:text="@string/yes" />
-
-            <RadioButton
-                android:id="@+id/btnNo"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:text="@string/no" />
-        </RadioGroup>
-
         <RelativeLayout
             android:id="@+id/badgeOuter"
             android:layout_width="wrap_content"
@@ -79,6 +72,7 @@
                     style="?attr/materialIconButtonFilledStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/speakableAttach"
                     app:icon="@drawable/baseline_attach_file_24" />
             </RelativeLayout>
 
@@ -86,7 +80,7 @@
                 android:id="@+id/txtCount"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_alignRight="@id/badgeInner"
+                android:layout_alignEnd="@id/badgeInner"
                 android:background="@drawable/badge_background"
                 android:textColor="#FFFFFF"
                 android:visibility="gone" />
@@ -98,8 +92,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:contentDescription="@string/speakableComment"
             app:icon="@drawable/baseline_add_comment_24"
             app:layout_constraintStart_toEndOf="@+id/badgeOuter"
             app:layout_constraintTop_toBottomOf="@+id/txtMarkComment" />
+
+        <Button
+            android:id="@+id/btnPKD"
+            style="?attr/materialIconButtonFilledStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/speakablePKD"
+            app:icon="@drawable/baseline_school_24"
+            app:layout_constraintStart_toEndOf="@+id/btnComment"
+            app:layout_constraintTop_toBottomOf="@+id/txtMarkComment" />
+
+        <TextView
+            android:id="@+id/txtSlider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/btnPKD"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnPKD" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
