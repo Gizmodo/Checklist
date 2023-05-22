@@ -8,6 +8,8 @@ import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import ru.dl.checklist.data.model.entity.MarkEntity
+import ru.dl.checklist.data.model.remote.ReadyMark
+import ru.dl.checklist.data.model.remote.ReadyMedia
 import ru.dl.checklist.domain.model.Answer
 import ru.dl.checklist.domain.model.MarkDomainWithCount
 
@@ -50,4 +52,27 @@ interface MarkDao {
     )
     fun getMarkListByZoneWithCount(zoneId: Long): Flow<List<MarkDomainWithCount>>
 
+    @Query("SELECT mark.id,\n" +
+            "       mark.points,\n" +
+            "       mark.answer,\n" +
+            "       mark.comment\n" +
+            "  FROM mark\n" +
+            "       JOIN\n" +
+            "       zone ON mark.zoneId = zone.id\n" +
+            "       JOIN\n" +
+            "       checklist ON zone.checklistId = checklist.id\n" +
+            " WHERE checklist.uuid = :uuid")
+    suspend fun getMarkListByChecklist(uuid: String): List<ReadyMark>
+
+    @Query("SELECT mark.id AS uuid,\n" +
+            "       media.media\n" +
+            "  FROM mark\n" +
+            "       JOIN\n" +
+            "       media ON media.markId = mark.id\n" +
+            "       JOIN\n" +
+            "       zone ON mark.zoneId = zone.id\n" +
+            "       JOIN\n" +
+            "       checklist ON zone.checklistId = checklist.id\n" +
+            " WHERE checklist.uuid = :uuid")
+    suspend fun getMediaListByChecklist(uuid: String): List<ReadyMedia>
 }

@@ -3,6 +3,8 @@ package ru.dl.checklist.data.repository
 import com.google.gson.JsonSyntaxException
 import com.google.gson.stream.MalformedJsonException
 import com.skydoves.sandwich.StatusCode
+import com.skydoves.sandwich.getOrElse
+import com.skydoves.sandwich.mapSuccess
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
@@ -19,6 +21,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import ru.dl.checklist.app.di.module.IoDispatcher
 import ru.dl.checklist.app.ext.whenNotNullNorEmpty
@@ -27,12 +32,14 @@ import ru.dl.checklist.app.utils.HTTPConstants
 import ru.dl.checklist.data.mapper.DtoToEntityMapper.toEntity
 import ru.dl.checklist.data.mapper.EntityToDomainMapper.toDomain
 import ru.dl.checklist.data.model.entity.MediaEntity
+import ru.dl.checklist.data.model.remote.ReadyChecklist
 import ru.dl.checklist.data.source.cache.ChecklistDao
 import ru.dl.checklist.data.source.cache.MarkDao
 import ru.dl.checklist.data.source.cache.MediaDao
 import ru.dl.checklist.data.source.cache.ZoneDao
 import ru.dl.checklist.data.source.remote.RemoteApi
 import ru.dl.checklist.domain.model.Answer
+import ru.dl.checklist.domain.model.BackendResponseDomain
 import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.MarkDomainWithCount
@@ -160,4 +167,142 @@ class CheckListRepositoryImpl @Inject constructor(
             Timber.i("mediaId: $res")
         }
     }
+
+    override fun uploadImages(uuid: String) = flow {
+        val mediaList = markDao.getMediaListByChecklist(uuid)
+        when {
+            mediaList.isEmpty() -> {
+                emit(ApiResult.Error("Фотографии отсутствуют"))
+            }
+            else -> {
+                val parts = mutableListOf<MultipartBody.Part>()
+                mediaList.forEach { media ->
+                    val mediaRequestBody =
+                        media.media.toRequestBody("image/jpeg".toMediaTypeOrNull(), 0, media.media.size)
+                    val mediaPart =
+                        MultipartBody.Part.createFormData("media", "image.jpg", mediaRequestBody)
+                    parts.add(mediaPart)
+
+                    val uuidRequestBody =
+                        media.uuid.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+                    val uuidPart = MultipartBody.Part.createFormData("uuid", uuidRequestBody.toString())
+                    parts.add(uuidPart)
+                }
+
+                val response = remoteDataSource.uploadImages(parts)
+                response.suspendOnSuccess {
+                    val res = response.mapSuccess {
+                        BackendResponseDomain(
+                            this.message ?: "Пустое поле message",
+                            this.result ?: false
+                        )
+                    }.getOrElse(BackendResponseDomain("Ошибка маппинга ответа", false))
+                    when {
+                        res.result -> {
+                            emit(ApiResult.Success(res))
+                        }
+
+                        else -> {
+                            emit(ApiResult.Error(res.message))
+                        }
+                    }
+                }.suspendOnError {
+                    Timber.e("suspendOnError ${statusCode.code}")
+                    when (this.statusCode) {
+                        StatusCode.Unauthorized -> emit(ApiResult.Error(HTTPConstants.Unauthorized))
+                        StatusCode.Forbidden -> emit(ApiResult.Error(HTTPConstants.Forbidden))
+                        StatusCode.BadGateway -> emit(ApiResult.Error(HTTPConstants.BadGateway))
+                        StatusCode.GatewayTimeout -> emit(ApiResult.Error(HTTPConstants.GatewayTimeout))
+                        StatusCode.InternalServerError -> emit(ApiResult.Error(HTTPConstants.SERVER_ERROR))
+                        StatusCode.BadRequest -> {
+                            try {
+                                val jObjError = JSONObject(errorBody?.string()!!)
+                                emit(ApiResult.Error(jObjError.getString("message")))
+                            } catch (e: Exception) {
+                                emit(ApiResult.Error(message()))
+                            }
+                        }
+
+                        else -> {
+                            Timber.wtf("${statusCode.code} " + HTTPConstants.GENERIC_ERROR_MESSAGE)
+                            emit(ApiResult.Error(HTTPConstants.GENERIC_ERROR_MESSAGE))
+                        }
+                    }
+                }.suspendOnException {
+                    Timber.e(this.exception)
+                    when (exception) {
+                        is SecurityException -> emit(ApiResult.Error(HTTPConstants.SECURITY_EXCEPTION))
+                        is UnknownHostException -> emit(ApiResult.Error(HTTPConstants.NO_INTERNET_ERROR_MESSAGE))
+                        is MalformedJsonException -> emit(ApiResult.Error(HTTPConstants.JSON_MALFORMED))
+                        is JsonSyntaxException -> emit(ApiResult.Error(HTTPConstants.JSON_EXCEPTION))
+                        else -> emit(ApiResult.Error(this.exception.message.toString()))
+                    }
+                }
+            }
+        }
+    }.onStart { emit(ApiResult.Loading) }
+        .catch {
+            Timber.e(it)
+            emit(ApiResult.Error(it.message.orEmpty()))
+        }
+        .flowOn(dispatcher)
+
+    override fun uploadMarks(uuid: String) = flow {
+        val marks = markDao.getMarkListByChecklist(uuid)
+        val response =
+            remoteDataSource.uploadMarks(ReadyChecklist(uuid, marks))
+        response.suspendOnSuccess {
+            val res = response.mapSuccess {
+                BackendResponseDomain(
+                    this.message ?: "Пустое поле message",
+                    this.result ?: false
+                )
+            }.getOrElse(BackendResponseDomain("Ошибка маппинга ответа", false))
+            when {
+                res.result -> {
+                    emit(ApiResult.Success(res))
+                }
+
+                else -> {
+                    emit(ApiResult.Error(res.message))
+                }
+            }
+        }.suspendOnError {
+            Timber.e("suspendOnError ${statusCode.code}")
+            when (this.statusCode) {
+                StatusCode.Unauthorized -> emit(ApiResult.Error(HTTPConstants.Unauthorized))
+                StatusCode.Forbidden -> emit(ApiResult.Error(HTTPConstants.Forbidden))
+                StatusCode.BadGateway -> emit(ApiResult.Error(HTTPConstants.BadGateway))
+                StatusCode.GatewayTimeout -> emit(ApiResult.Error(HTTPConstants.GatewayTimeout))
+                StatusCode.InternalServerError -> emit(ApiResult.Error(HTTPConstants.SERVER_ERROR))
+                StatusCode.BadRequest -> {
+                    try {
+                        val jObjError = JSONObject(errorBody?.string()!!)
+                        emit(ApiResult.Error(jObjError.getString("message")))
+                    } catch (e: Exception) {
+                        emit(ApiResult.Error(message()))
+                    }
+                }
+
+                else -> {
+                    Timber.wtf("${statusCode.code} " + HTTPConstants.GENERIC_ERROR_MESSAGE)
+                    emit(ApiResult.Error(HTTPConstants.GENERIC_ERROR_MESSAGE))
+                }
+            }
+        }.suspendOnException {
+            Timber.e(this.exception)
+            when (exception) {
+                is SecurityException -> emit(ApiResult.Error(HTTPConstants.SECURITY_EXCEPTION))
+                is UnknownHostException -> emit(ApiResult.Error(HTTPConstants.NO_INTERNET_ERROR_MESSAGE))
+                is MalformedJsonException -> emit(ApiResult.Error(HTTPConstants.JSON_MALFORMED))
+                is JsonSyntaxException -> emit(ApiResult.Error(HTTPConstants.JSON_EXCEPTION))
+                else -> emit(ApiResult.Error(this.exception.message.toString()))
+            }
+        }
+    }.onStart { emit(ApiResult.Loading) }
+        .catch {
+            Timber.e(it)
+            emit(ApiResult.Error(it.message.orEmpty()))
+        }
+        .flowOn(dispatcher)
 }
