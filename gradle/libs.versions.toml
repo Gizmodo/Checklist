@@ -1,31 +1,32 @@
 [versions]
-activityKtx = "1.8.0-alpha03"
-androidGradlePlugin = "8.2.0-alpha02"
+activityKtx = "1.8.0-alpha04"
 androidx-junit = "1.1.5"
 appcompat = "1.7.0-alpha02"
 arrow = "1.2.0-RC"
 constraintlayout = "2.1.4"
 core-ktx = "1.10.1"
 coreTesting = "1.1.1"
-dagger = "2.46"
+dagger = "2.46.1"
 datastore = "1.0.0"
 desugar_jdk_libs = "2.0.3"
 detekt = "1.23.0-RC3"
 espresso-core = "3.5.1"
 fancy = "2.0.2"
 fragmentKtx = "1.5.7"
-gradle = "8.2.0-alpha02"
+glide = "4.15.1"
+gradle = "8.2.0-alpha04"
 gson = "2.10.1"
 junit = "4.13.2"
+junitJupiter = "5.9.2"
 junitJupiterApi = "5.9.3"
 kotlinVersion = "1.8.21"
-kotlinxCoroutinesCore = "1.7.0"
+kotlinxCoroutinesCore = "1.7.1"
 kotlinxSerializationJson = "1.5.1"
 retrofitKotlinxSerializationJson = "1.0.0"
 kspVersion = "1.8.21-1.0.11"
 leakcanaryAndroid = "2.10"
 lifecycle = "2.6.1"
-material = "1.10.0-alpha02"
+material = "1.10.0-alpha03"
 navigation = "2.5.3"
 okhttp = "5.0.0-alpha.11"
 retrofit = "2.9.0"
@@ -75,9 +76,11 @@ dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 fancy = { module = "io.github.shashank02051997:FancyToast", version.ref = "fancy" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { module = "junit:junit", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
@@ -113,6 +116,6 @@ coroutines = ["kotlinx-coroutines-android", "kotlinx-coroutines-core"]
 navigation = ["androidx-navigation-dynamic-features-fragment", "androidx-navigation-fragment-ktx", "androidx-navigation-runtime-ktx", "androidx-navigation-ui-ktx"]
 room = ["androidx-room-ktx", "androidx-room-paging", "androidx-room-runtime", "androidx-work-runtime-ktx"]
 lifecycle = ["androidx-lifecycle-livedata-ktx", "androidx-lifecycle-process", "androidx-lifecycle-reactivestreams-ktx", "androidx-lifecycle-runtime-ktx", "androidx-lifecycle-service", "androidx-lifecycle-viewmodel-ktx", "androidx-lifecycle-viewmodel-savedstate"]
-arrow = ["arrow-core", "arrow-fx-coroutines","arrow-optics"]
+arrow = ["arrow-core", "arrow-fx-coroutines", "arrow-optics"]
 datastore = ["androidx-datastore", "androidx-datastore-preferences"]
 retrofit = ["converter-gson", "converter-scalars", "retrofit-kotlin-serialization", "kotlinx-serialization-json", "retrofit-core", "okhttp-core", "okhttp-logging", "kotlin-serialization"]

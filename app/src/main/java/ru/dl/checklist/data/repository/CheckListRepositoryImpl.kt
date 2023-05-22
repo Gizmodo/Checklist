@@ -3,6 +3,8 @@ package ru.dl.checklist.data.repository
 import com.google.gson.JsonSyntaxException
 import com.google.gson.stream.MalformedJsonException
 import com.skydoves.sandwich.StatusCode
+import com.skydoves.sandwich.getOrElse
+import com.skydoves.sandwich.mapSuccess
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
@@ -18,6 +20,10 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import ru.dl.checklist.app.di.module.IoDispatcher
 import ru.dl.checklist.app.ext.whenNotNullNorEmpty
@@ -25,12 +31,18 @@ import ru.dl.checklist.app.utils.ApiResult
 import ru.dl.checklist.app.utils.HTTPConstants
 import ru.dl.checklist.data.mapper.DtoToEntityMapper.toEntity
 import ru.dl.checklist.data.mapper.EntityToDomainMapper.toDomain
+import ru.dl.checklist.data.model.entity.MediaEntity
+import ru.dl.checklist.data.model.remote.ReadyChecklist
 import ru.dl.checklist.data.source.cache.ChecklistDao
 import ru.dl.checklist.data.source.cache.MarkDao
+import ru.dl.checklist.data.source.cache.MediaDao
 import ru.dl.checklist.data.source.cache.ZoneDao
 import ru.dl.checklist.data.source.remote.RemoteApi
+import ru.dl.checklist.domain.model.Answer
+import ru.dl.checklist.domain.model.BackendResponseDomain
 import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
+import ru.dl.checklist.domain.model.MarkDomainWithCount
 import ru.dl.checklist.domain.model.ZoneDomain
 import ru.dl.checklist.domain.repository.CheckListRepository
 import timber.log.Timber
@@ -41,6 +53,7 @@ class CheckListRepositoryImpl @Inject constructor(
     private val checklistDao: ChecklistDao,
     private val zoneDao: ZoneDao,
     private val markDao: MarkDao,
+    private val mediaDao: MediaDao,
     private val remoteDataSource: RemoteApi,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : CheckListRepository {
@@ -74,8 +87,7 @@ class CheckListRepositoryImpl @Inject constructor(
                         }
                     }
                     val checklist = checklistDao.getAll()
-                    val returnList = checklist.map { it.toDomain() }
-                    scopeResult = ApiResult.Success(returnList)
+                    scopeResult = ApiResult.Success(checklist)
                 } catch (e: Exception) {
                     Timber.e("An error occurred: " + e.message)
                     scopeResult = ApiResult.Error(e.message.toString())
@@ -124,10 +136,7 @@ class CheckListRepositoryImpl @Inject constructor(
 
     override fun getZonesByChecklist(uuid: String): Flow<List<ZoneDomain>> {
         val inter = zoneDao.getZoneListByChecklist(uuid)
-        val interMap = inter.map { list ->
-            list.map { it.toDomain() }
-        }
-        return interMap.flowOn(dispatcher)
+        return inter.flowOn(dispatcher)
     }
 
     override fun getMarksByZone(zoneId: Long): Flow<List<MarkDomain>> {
@@ -138,4 +147,162 @@ class CheckListRepositoryImpl @Inject constructor(
         return interMap.flowOn(dispatcher)
     }
 
+    override fun getMarksByZoneWithCount(zoneId: Long): Flow<List<MarkDomainWithCount>> {
+        val inter = markDao.getMarkListByZoneWithCount(zoneId)
+        return inter.flowOn(dispatcher)
+    }
+
+    override suspend fun changeAnswer(markId: Long, answer: Answer) {
+        withContext(dispatcher) { markDao.updateMarkAnswer(markId, answer) }
+    }
+
+    override suspend fun changeComment(markId: Long, comment: String) {
+        withContext(dispatcher) { markDao.updateMarkComment(markId, comment) }
+    }
+
+    override suspend fun addPhoto(markId: Long, byteArray: ByteArray) {
+        withContext(dispatcher) {
+            val mediaEntity = MediaEntity(markId = markId, media = byteArray)
+            val res = mediaDao.insert(mediaEntity)
+            Timber.i("mediaId: $res")
+        }
+    }
+
+    override fun uploadImages(uuid: String) = flow {
+        val mediaList = markDao.getMediaListByChecklist(uuid)
+        when {
+            mediaList.isEmpty() -> {
+                emit(ApiResult.Error("Фотографии отсутствуют"))
+            }
+            else -> {
+                val parts = mutableListOf<MultipartBody.Part>()
+                mediaList.forEach { media ->
+                    val mediaRequestBody =
+                        media.media.toRequestBody("image/jpeg".toMediaTypeOrNull(), 0, media.media.size)
+                    val mediaPart =
+                        MultipartBody.Part.createFormData("media", "image.jpg", mediaRequestBody)
+                    parts.add(mediaPart)
+
+                    val uuidRequestBody =
+                        media.uuid.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+                    val uuidPart = MultipartBody.Part.createFormData("uuid", uuidRequestBody.toString())
+                    parts.add(uuidPart)
+                }
+
+                val response = remoteDataSource.uploadImages(parts)
+                response.suspendOnSuccess {
+                    val res = response.mapSuccess {
+                        BackendResponseDomain(
+                            this.message ?: "Пустое поле message",
+                            this.result ?: false
+                        )
+                    }.getOrElse(BackendResponseDomain("Ошибка маппинга ответа", false))
+                    when {
+                        res.result -> {
+                            emit(ApiResult.Success(res))
+                        }
+
+                        else -> {
+                            emit(ApiResult.Error(res.message))
+                        }
+                    }
+                }.suspendOnError {
+                    Timber.e("suspendOnError ${statusCode.code}")
+                    when (this.statusCode) {
+                        StatusCode.Unauthorized -> emit(ApiResult.Error(HTTPConstants.Unauthorized))
+                        StatusCode.Forbidden -> emit(ApiResult.Error(HTTPConstants.Forbidden))
+                        StatusCode.BadGateway -> emit(ApiResult.Error(HTTPConstants.BadGateway))
+                        StatusCode.GatewayTimeout -> emit(ApiResult.Error(HTTPConstants.GatewayTimeout))
+                        StatusCode.InternalServerError -> emit(ApiResult.Error(HTTPConstants.SERVER_ERROR))
+                        StatusCode.BadRequest -> {
+                            try {
+                                val jObjError = JSONObject(errorBody?.string()!!)
+                                emit(ApiResult.Error(jObjError.getString("message")))
+                            } catch (e: Exception) {
+                                emit(ApiResult.Error(message()))
+                            }
+                        }
+
+                        else -> {
+                            Timber.wtf("${statusCode.code} " + HTTPConstants.GENERIC_ERROR_MESSAGE)
+                            emit(ApiResult.Error(HTTPConstants.GENERIC_ERROR_MESSAGE))
+                        }
+                    }
+                }.suspendOnException {
+                    Timber.e(this.exception)
+                    when (exception) {
+                        is SecurityException -> emit(ApiResult.Error(HTTPConstants.SECURITY_EXCEPTION))
+                        is UnknownHostException -> emit(ApiResult.Error(HTTPConstants.NO_INTERNET_ERROR_MESSAGE))
+                        is MalformedJsonException -> emit(ApiResult.Error(HTTPConstants.JSON_MALFORMED))
+                        is JsonSyntaxException -> emit(ApiResult.Error(HTTPConstants.JSON_EXCEPTION))
+                        else -> emit(ApiResult.Error(this.exception.message.toString()))
+                    }
+                }
+            }
+        }
+    }.onStart { emit(ApiResult.Loading) }
+        .catch {
+            Timber.e(it)
+            emit(ApiResult.Error(it.message.orEmpty()))
+        }
+        .flowOn(dispatcher)
+
+    override fun uploadMarks(uuid: String) = flow {
+        val marks = markDao.getMarkListByChecklist(uuid)
+        val response =
+            remoteDataSource.uploadMarks(ReadyChecklist(uuid, marks))
+        response.suspendOnSuccess {
+            val res = response.mapSuccess {
+                BackendResponseDomain(
+                    this.message ?: "Пустое поле message",
+                    this.result ?: false
+                )
+            }.getOrElse(BackendResponseDomain("Ошибка маппинга ответа", false))
+            when {
+                res.result -> {
+                    emit(ApiResult.Success(res))
+                }
+
+                else -> {
+                    emit(ApiResult.Error(res.message))
+                }
+            }
+        }.suspendOnError {
+            Timber.e("suspendOnError ${statusCode.code}")
+            when (this.statusCode) {
+                StatusCode.Unauthorized -> emit(ApiResult.Error(HTTPConstants.Unauthorized))
+                StatusCode.Forbidden -> emit(ApiResult.Error(HTTPConstants.Forbidden))
+                StatusCode.BadGateway -> emit(ApiResult.Error(HTTPConstants.BadGateway))
+                StatusCode.GatewayTimeout -> emit(ApiResult.Error(HTTPConstants.GatewayTimeout))
+                StatusCode.InternalServerError -> emit(ApiResult.Error(HTTPConstants.SERVER_ERROR))
+                StatusCode.BadRequest -> {
+                    try {
+                        val jObjError = JSONObject(errorBody?.string()!!)
+                        emit(ApiResult.Error(jObjError.getString("message")))
+                    } catch (e: Exception) {
+                        emit(ApiResult.Error(message()))
+                    }
+                }
+
+                else -> {
+                    Timber.wtf("${statusCode.code} " + HTTPConstants.GENERIC_ERROR_MESSAGE)
+                    emit(ApiResult.Error(HTTPConstants.GENERIC_ERROR_MESSAGE))
+                }
+            }
+        }.suspendOnException {
+            Timber.e(this.exception)
+            when (exception) {
+                is SecurityException -> emit(ApiResult.Error(HTTPConstants.SECURITY_EXCEPTION))
+                is UnknownHostException -> emit(ApiResult.Error(HTTPConstants.NO_INTERNET_ERROR_MESSAGE))
+                is MalformedJsonException -> emit(ApiResult.Error(HTTPConstants.JSON_MALFORMED))
+                is JsonSyntaxException -> emit(ApiResult.Error(HTTPConstants.JSON_EXCEPTION))
+                else -> emit(ApiResult.Error(this.exception.message.toString()))
+            }
+        }
+    }.onStart { emit(ApiResult.Loading) }
+        .catch {
+            Timber.e(it)
+            emit(ApiResult.Error(it.message.orEmpty()))
+        }
+        .flowOn(dispatcher)
 }

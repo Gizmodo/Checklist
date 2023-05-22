@@ -8,4 +8,7 @@ class GetMarkListByZone @Inject constructor(
 ) {
     fun run(zoneId: Long) =
         repository.getMarksByZone(zoneId)
+
+    fun runWithCount(zoneId: Long) =
+        repository.getMarksByZoneWithCount(zoneId)
 }

@@ -3,7 +3,9 @@ package ru.dl.checklist.data.model.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
+import androidx.room.Index
 import androidx.room.PrimaryKey
+import ru.dl.checklist.domain.model.Answer
 
 @Entity(
     tableName = "mark", foreignKeys = [
@@ -13,11 +15,16 @@ import androidx.room.PrimaryKey
             childColumns = ["zoneId"],
             onDelete = CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["zoneId"])
     ]
 )
 data class MarkEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val zoneId: Long,
     val points: Int,
-    val title: String
+    val title: String,
+    val answer: Answer?,
+    val comment: String
 )

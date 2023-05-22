@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import ru.dl.checklist.data.model.entity.ZoneEntity
+import ru.dl.checklist.domain.model.ZoneDomain
 
 @Dao
 interface ZoneDao {
@@ -28,6 +29,13 @@ interface ZoneDao {
     @Delete
     fun delete(zone: ZoneEntity)
 
-    @Query("select zone.* from checklist inner join zone on checklist.id=zone.checklistId where uuid = :uuid")
-    fun getZoneListByChecklist(uuid: String): Flow<List<ZoneEntity>>
+    @Query(
+        "SELECT zone.id, zone.zone, round(ifnull(sum(points * answer), 0) / sum(CAST (points AS REAL) ), 4) * 100 AS percent FROM zone\n" +
+                "       LEFT JOIN\n" +
+                "       mark ON mark.zoneId = zone.id\n" +
+                "       left join \n" +
+                "       checklist on checklist.id=zone.checklistId\n" +
+                " WHERE checklist.uuid=:uuid GROUP BY zone.id"
+    )
+    fun getZoneListByChecklist(uuid: String): Flow<List<ZoneDomain>>
 }

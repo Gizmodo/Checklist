@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Module
 object NetworkModule {
     @Provides
-    fun provideOkHttpClientFood(): OkHttpClient {
+    fun provideOkHttpClient(): OkHttpClient {
         val logging = HttpLoggingInterceptor { message -> Timber.i(message) }
         logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
 
@@ -33,7 +33,7 @@ object NetworkModule {
     }
 
     @Provides
-    fun provideRetrofitFood(okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         val gson = GsonBuilder().setLenient().create()
         return Retrofit.Builder()
             .baseUrl(BASEURL)
@@ -46,7 +46,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideFoodApi(retrofit: Retrofit): RemoteApi {
+    fun provideApi(retrofit: Retrofit): RemoteApi {
         return retrofit.create(RemoteApi::class.java)
     }
 }

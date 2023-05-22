@@ -2,7 +2,9 @@ package ru.dl.checklist.app.presenter.zone
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import ru.dl.checklist.app.utils.ColorCategory
 import ru.dl.checklist.databinding.CardZoneBinding
 import ru.dl.checklist.domain.model.ZoneDomain
 
@@ -14,6 +16,17 @@ class ZoneListAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ZoneDomain) = binding.apply {
             txtZone.text = item.zone
+            val percent = item.percent.toInt()
+            txtPercent.text = "$percent%"
+            progressBar.progress = percent
+
+            progressBar.setIndicatorColor(
+                ResourcesCompat.getColor(
+                    binding.root.resources,
+                    ColorCategory.getColorCategory(percent),
+                    null
+                )
+            )
             root.setOnClickListener { onItemClick(item) }
         }
     }

@@ -2,7 +2,19 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="Checklist [app:uninstallAll]">
+      <entry key="Checklist [:app:testDebugUnitTest, --tests, ru.dl.checklist.ExampleUnitTest]">
+        <State />
+      </entry>
+      <entry key="Checklist [app:testDebugUnitTest]">
+        <State />
+      </entry>
+      <entry key="ExampleUnitTest">
+        <State />
+      </entry>
+      <entry key="ExampleUnitTest.entity to model">
+        <State />
+      </entry>
+      <entry key="ExampleUnitTest.mark mapping">
         <State />
       </entry>
       <entry key="app">

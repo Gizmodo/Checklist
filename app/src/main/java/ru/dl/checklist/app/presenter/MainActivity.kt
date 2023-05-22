@@ -1,6 +1,7 @@
 package ru.dl.checklist.app.presenter
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -24,6 +25,20 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                else -> showToolbar()
+            }
+        }
+    }
+
+    private fun showToolbar() {
+        binding.toolbar.visibility = View.VISIBLE
+    }
+
+    private fun hideToolbar() {
+        binding.toolbar.visibility = View.GONE
     }
 
     fun setActionBarTitle(title: String) {

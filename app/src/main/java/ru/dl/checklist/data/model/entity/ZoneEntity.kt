@@ -3,6 +3,7 @@ package ru.dl.checklist.data.model.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -13,6 +14,9 @@ import androidx.room.PrimaryKey
             childColumns = ["checklistId"],
             onDelete = CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["checklistId"])
     ]
 )
 data class ZoneEntity(

@@ -2,7 +2,9 @@ package ru.dl.checklist.app.presenter.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import ru.dl.checklist.app.utils.ColorCategory
 import ru.dl.checklist.databinding.CardChecklistBinding
 import ru.dl.checklist.domain.model.ChecklistDomain
 
@@ -31,11 +33,23 @@ class ChecklistAdapter(
     inner class ChecklistViewHolder(private val binding: CardChecklistBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ChecklistDomain) = binding.apply {
-            txtAddress.text = item.address.value
-            txtShortName.text = item.shortName.value
-            txtDate.text = item.auditDate.value
-            txtChecker.text = item.checker.value
-            txtSenior.text = item.senior.value
+            txtAddress.text = item.address
+            txtShortName.text = item.shortName
+            txtDate.text = item.auditDate
+            txtChecker.text = item.checker
+            txtSenior.text = item.senior
+
+            val percent = item.percent.toInt()
+            txtPercent.text = "$percent%"
+            progressBar.progress = percent
+
+            progressBar.setIndicatorColor(
+                ResourcesCompat.getColor(
+                    binding.root.resources,
+                    ColorCategory.getColorCategory(percent),
+                    null
+                )
+            )
             root.setOnClickListener { onItemClick(item) }
         }
     }

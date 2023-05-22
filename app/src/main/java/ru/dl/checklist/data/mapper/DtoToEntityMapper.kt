@@ -6,6 +6,7 @@ import ru.dl.checklist.data.model.entity.ZoneEntity
 import ru.dl.checklist.data.model.remote.ChecklistDto
 import ru.dl.checklist.data.model.remote.MarkDto
 import ru.dl.checklist.data.model.remote.ZoneDto
+import ru.dl.checklist.domain.model.Answer
 
 object DtoToEntityMapper {
     fun ChecklistDto.toEntity(): ChecklistEntity {
@@ -30,7 +31,9 @@ object DtoToEntityMapper {
         return MarkEntity(
             zoneId = zoneId,
             points = points ?: 0,
-            title = title ?: ""
+            title = title ?: "",
+            answer = Answer.UNDEFINED,
+            comment = ""
         )
     }
 }
