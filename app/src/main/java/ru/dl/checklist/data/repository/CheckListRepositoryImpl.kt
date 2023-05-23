@@ -112,17 +112,11 @@ class CheckListRepositoryImpl @Inject constructor(
         return interMap.flowOn(dispatcher)
     }
 
-    override fun getMarksByZoneWithCount(zoneId: Long): Flow<List<MarkDomainWithCount>> {
-        val inter = markDao.getMarkListByZoneWithCount(zoneId)
-        return inter.flowOn(dispatcher)
-    }
+    override fun getMarksByZoneWithCount(zoneId: Long): Flow<List<MarkDomainWithCount>> =
+        markDao.getMarkListByZoneWithCount(zoneId).flowOn(dispatcher)
 
-    override suspend fun changeAnswer(markId: Long, answer: Float) {
-        withContext(dispatcher) { markDao.updateMarkAnswer(markId, answer) }
-    }
-
-    override suspend fun changeComment(markId: Long, comment: String) {
-        withContext(dispatcher) { markDao.updateMarkComment(markId, comment) }
+    override suspend fun updateMark(markId: Long, comment: String, answer: Float, pkd: String) {
+        withContext(dispatcher) { markDao.updateMark(markId, comment, answer, pkd) }
     }
 
     override suspend fun addPhoto(markId: Long, byteArray: ByteArray) {

@@ -25,5 +25,6 @@ data class MarkEntity(
     val points: Int,
     val title: String,
     val answer: Float?,
-    val comment: String
+    val comment: String,
+    val pkd: String,
 )

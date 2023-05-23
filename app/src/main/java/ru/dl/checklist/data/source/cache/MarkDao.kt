@@ -1,7 +1,6 @@
 package ru.dl.checklist.data.source.cache
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -24,9 +23,6 @@ interface MarkDao {
     @Transaction
     suspend fun insert(mark: MarkEntity): Long
 
-    @Delete
-    fun delete(mark: MarkEntity)
-
     @Query(
         "select mark.* from mark\n" +
                 "inner join zone on zone.id=mark.zoneId\n" +
@@ -34,11 +30,8 @@ interface MarkDao {
     )
     fun getMarkListByZone(zoneId: Long): Flow<List<MarkEntity>>
 
-    @Query("UPDATE mark SET answer = :answer WHERE id = :markId")
-    fun updateMarkAnswer(markId: Long, answer: Float)
-
-    @Query("UPDATE mark SET comment = :comment WHERE id = :markId")
-    fun updateMarkComment(markId: Long, comment: String)
+    @Query("UPDATE mark SET comment = :comment,answer = :answer, pkd = :pkd WHERE id = :markId")
+    fun updateMark(markId: Long, comment: String, answer: Float, pkd: String)
 
     @Query(
         "SELECT mark.*,\n" +
@@ -55,7 +48,8 @@ interface MarkDao {
         "SELECT mark.id,\n" +
                 "       mark.points,\n" +
                 "       mark.answer,\n" +
-                "       mark.comment\n" +
+                "       mark.comment,\n" +
+                "       mark.pkd\n" +
                 "  FROM mark\n" +
                 "       JOIN\n" +
                 "       zone ON mark.zoneId = zone.id\n" +

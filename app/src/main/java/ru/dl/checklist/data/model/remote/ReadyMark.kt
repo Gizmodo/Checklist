@@ -4,5 +4,6 @@ data class ReadyMark(
     val id: Long,
     val points: Int,
     val answer: Float,
-    val comment: String
+    val comment: String,
+    val pkd: String
 )

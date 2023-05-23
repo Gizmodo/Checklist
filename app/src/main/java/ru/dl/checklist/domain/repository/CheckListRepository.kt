@@ -13,8 +13,7 @@ interface CheckListRepository {
     fun getZonesByChecklist(uuid: String): Flow<List<ZoneDomain>>
     fun getMarksByZone(zoneId: Long): Flow<List<MarkDomain>>
     fun getMarksByZoneWithCount(zoneId: Long): Flow<List<MarkDomainWithCount>>
-    suspend fun changeAnswer(markId: Long, answer: Float)
-    suspend fun changeComment(markId: Long, comment: String)
+    suspend fun updateMark(markId: Long, comment: String, answer: Float, pkd: String)
     suspend fun addPhoto(markId: Long, byteArray: ByteArray)
     fun uploadImages(uuid: String): Flow<ApiResult<BackendResponseDomain>>
     fun uploadMarks(uuid: String): Flow<ApiResult<BackendResponseDomain>>
