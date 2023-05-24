@@ -12,4 +12,5 @@
     <string name="speakablePKD">ПКД</string>
     <string name="speakableComment">Комментарий</string>
     <string name="speakableAttach">Фотография</string>
+    <string name="label_mark">Значение показателя</string>
 </resources>
