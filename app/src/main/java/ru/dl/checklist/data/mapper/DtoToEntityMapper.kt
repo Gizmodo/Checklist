@@ -15,7 +15,8 @@ object DtoToEntityMapper {
             auditDate = auditDate ?: "",
             checker = checker ?: "",
             senior = senior ?: "",
-            shortName = shortName ?: ""
+            shortName = shortName ?: "",
+            title = title ?: "Название не задано"
         )
     }
 

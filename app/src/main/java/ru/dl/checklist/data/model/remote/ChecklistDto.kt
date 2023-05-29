@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName
 data class ChecklistDto(
     @SerializedName("uuid")
     val uuid: String?,
+    @SerializedName("title")
+    val title: String?,
     @SerializedName("address")
     val address: String?,
     @SerializedName("audit_date")

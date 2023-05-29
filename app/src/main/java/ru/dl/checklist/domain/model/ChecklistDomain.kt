@@ -8,5 +8,6 @@ data class ChecklistDomain(
     val checker: String,
     val senior: String,
     val shortName: String,
-    val percent: Double
+    val percent: Double,
+    val title: String
 )

@@ -12,5 +12,6 @@ data class ChecklistEntity(
     @ColumnInfo(name = "audit_date") val auditDate: String,
     @ColumnInfo(name = "checker") val checker: String,
     @ColumnInfo(name = "senior") val senior: String,
-    @ColumnInfo(name = "short_name") val shortName: String
+    @ColumnInfo(name = "short_name") val shortName: String,
+    @ColumnInfo(name = "title") val title: String,
 )

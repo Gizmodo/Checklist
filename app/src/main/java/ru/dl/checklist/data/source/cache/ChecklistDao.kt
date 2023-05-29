@@ -19,6 +19,7 @@ interface ChecklistDao {
                 "       checklist.checker,\n" +
                 "       checklist.senior,\n" +
                 "       checklist.short_name AS shortName,\n" +
+                "       checklist.title AS title,\n" +
                 "       round(avg(tbl.percent), 2) AS percent\n" +
                 "  FROM checklist\n" +
                 "       JOIN\n" +

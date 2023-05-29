@@ -17,7 +17,8 @@ object EntityToDomainMapper {
             checker = checker,
             senior = senior,
             shortName = shortName,
-            0.0
+            0.0,
+            title = title
         )
     }
 
