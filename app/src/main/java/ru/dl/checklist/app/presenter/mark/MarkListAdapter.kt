@@ -39,7 +39,29 @@ class MarkListAdapter(
         fun bind(item: MarkDomainWithCount): CardMarkBinding {
             //  UI
             binding.txtMarkTitle.text = item.title
-            binding.txtMarkComment.text = item.comment
+
+            when {
+                item.comment.isEmpty() -> {
+                    binding.txtMarkComment.visibility = View.GONE
+                    binding.txtMarkComment.text = ""
+                }
+
+                else -> {
+                    binding.txtMarkComment.visibility = View.VISIBLE
+                    binding.txtMarkComment.text = "Комментарий: " + item.comment
+                }
+            }
+            when {
+                item.pkd.isEmpty() -> {
+                    binding.txtPKD.visibility = View.GONE
+                    binding.txtPKD.text = ""
+                }
+
+                else -> {
+                    binding.txtPKD.visibility = View.VISIBLE
+                    binding.txtPKD.text = "ПКД: " + item.pkd
+                }
+            }
             binding.txtAnswer.text = "${item.answer}/10"
             when {
                 item.count > 0 -> {

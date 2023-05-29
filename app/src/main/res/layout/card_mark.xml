@@ -37,13 +37,25 @@
             app:layout_constraintTop_toBottomOf="@+id/txtMarkTitle"
             tools:text="Здесь выводится комментарий к показателю" />
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txtPKD"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textStyle="italic|bold"
+            app:layout_constraintEnd_toEndOf="@+id/txtMarkComment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtMarkComment"
+            tools:text="Здесь выводится ПКД к показателю" />
+
         <RelativeLayout
             android:id="@+id/badgeOuter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtMarkComment">
+            app:layout_constraintTop_toBottomOf="@+id/txtPKD">
 
             <RelativeLayout
                 android:id="@+id/badgeInner"
