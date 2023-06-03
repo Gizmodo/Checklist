@@ -13,4 +13,5 @@
     <string name="speakableComment">Комментарий</string>
     <string name="speakableAttach">Фотография</string>
     <string name="label_mark">Значение показателя</string>
+    <string name="search">Поиск</string>
 </resources>

@@ -6,6 +6,7 @@ import ru.dl.checklist.domain.model.BackendResponseDomain
 import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.MarkDomainWithCount
+import ru.dl.checklist.domain.model.ObjectDomain
 import ru.dl.checklist.domain.model.ZoneDomain
 
 interface CheckListRepository {
@@ -17,4 +18,5 @@ interface CheckListRepository {
     suspend fun addPhoto(markId: Long, byteArray: ByteArray)
     fun uploadImages(uuid: String): Flow<ApiResult<BackendResponseDomain>>
     fun uploadMarks(uuid: String): Flow<ApiResult<BackendResponseDomain>>
+    fun getObjectsList(): Flow<ApiResult<List<ObjectDomain>>>
 }

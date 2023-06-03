@@ -25,6 +25,7 @@ import ru.dl.checklist.app.ext.RetrofitHandler.errorHandler
 import ru.dl.checklist.app.ext.RetrofitHandler.exceptionHandler
 import ru.dl.checklist.app.ext.whenNotNullNorEmpty
 import ru.dl.checklist.app.utils.ApiResult
+import ru.dl.checklist.data.mapper.DtoToDomainMapper.toDomain
 import ru.dl.checklist.data.mapper.DtoToEntityMapper.toEntity
 import ru.dl.checklist.data.mapper.EntityToDomainMapper.toDomain
 import ru.dl.checklist.data.model.entity.MediaEntity
@@ -38,6 +39,7 @@ import ru.dl.checklist.domain.model.BackendResponseDomain
 import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.MarkDomainWithCount
+import ru.dl.checklist.domain.model.ObjectDomain
 import ru.dl.checklist.domain.model.ZoneDomain
 import ru.dl.checklist.domain.repository.CheckListRepository
 import timber.log.Timber
@@ -183,6 +185,22 @@ class CheckListRepositoryImpl @Inject constructor(
         }
         .flowOn(dispatcher)
 
+
+    override fun getObjectsList(): Flow<ApiResult<List<ObjectDomain>>> = flow {
+        val response = remoteDataSource.getCheckedObjects()
+        response
+            .suspendOnSuccess {
+                val mapped = this.data.objects?.map { it.toDomain() }
+                emit(ApiResult.Success(mapped ?: emptyList()))
+            }
+            .suspendOnError { emit(errorHandler(this)) }
+            .suspendOnException { emit(exceptionHandler(exception)) }
+    }.onStart { emit(ApiResult.Loading) }
+        .catch {
+            Timber.e(it)
+            emit(ApiResult.Error(it.message.orEmpty()))
+        }
+        .flowOn(dispatcher)
 
     override fun uploadMarks(uuid: String) = flow {
         val marks = markDao.getMarkListByChecklist(uuid)

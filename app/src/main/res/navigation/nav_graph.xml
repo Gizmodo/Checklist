@@ -36,4 +36,17 @@
             android:name="zoneId"
             app:argType="integer" />
     </fragment>
+    <fragment
+    <fragment
+        android:id="@+id/objectsFragment"
+        android:name="ru.dl.checklist.app.presenter.objects.ObjectsFragment"
+        android:label="Магазины"
+        tools:layout="@layout/fragment_objects" >
+        <argument
+            android:name="template_uuid"
+            app:argType="string" />
+        <argument
+            android:name="template_name"
+            app:argType="string" />
+    </fragment>
 </navigation>
