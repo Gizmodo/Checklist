@@ -40,6 +40,7 @@ import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.MarkDomainWithCount
 import ru.dl.checklist.domain.model.ObjectDomain
+import ru.dl.checklist.domain.model.TemplateDomain
 import ru.dl.checklist.domain.model.ZoneDomain
 import ru.dl.checklist.domain.repository.CheckListRepository
 import timber.log.Timber
@@ -185,6 +186,21 @@ class CheckListRepositoryImpl @Inject constructor(
         }
         .flowOn(dispatcher)
 
+    override fun getChecklistTemplates(): Flow<ApiResult<List<TemplateDomain>>> = flow {
+        val response = remoteDataSource.getTemplates()
+        response
+            .suspendOnSuccess {
+                val mapped = this.data.templates?.map { it.toDomain() }
+                emit(ApiResult.Success(mapped ?: emptyList()))
+            }
+            .suspendOnError { emit(errorHandler(this)) }
+            .suspendOnException { emit(exceptionHandler(exception)) }
+    }.onStart { emit(ApiResult.Loading) }
+        .catch {
+            Timber.e(it)
+            emit(ApiResult.Error(it.message.orEmpty()))
+        }
+        .flowOn(dispatcher)
 
     override fun getObjectsList(): Flow<ApiResult<List<ObjectDomain>>> = flow {
         val response = remoteDataSource.getCheckedObjects()

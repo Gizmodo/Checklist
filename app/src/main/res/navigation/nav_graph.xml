@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_MainFragment_to_zonesListFragment"
             app:destination="@id/zonesListFragment" />
+        <action
+            android:id="@+id/action_MainFragment_to_checklistTemplateFragment"
+            app:destination="@id/checklistTemplateFragment" />
     </fragment>
     <fragment
         android:id="@+id/zonesListFragment"
@@ -37,6 +40,14 @@
             app:argType="integer" />
     </fragment>
     <fragment
+        android:id="@+id/checklistTemplateFragment"
+        android:name="ru.dl.checklist.app.presenter.template.TemplateChecklistFragment"
+        android:label="Назначение чеклиста"
+        tools:layout="@layout/fragment_checklist_template" >
+        <action
+            android:id="@+id/action_checklistTemplateFragment_to_objectsFragment"
+            app:destination="@id/objectsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/objectsFragment"
         android:name="ru.dl.checklist.app.presenter.objects.ObjectsFragment"
