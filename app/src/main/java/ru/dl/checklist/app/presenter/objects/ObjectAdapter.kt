@@ -5,15 +5,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import ru.dl.checklist.databinding.CardTemplateBinding
+import ru.dl.checklist.databinding.CardObjectBinding
 import ru.dl.checklist.domain.model.ObjectDomain
 
 class ObjectAdapter(private val onItemClick: (item: ObjectDomain) -> Unit) :
     ListAdapter<ObjectDomain, ObjectAdapter.ObjectViewHolder>(DiffCallback) {
-    inner class ObjectViewHolder(private val binding: CardTemplateBinding) :
+    inner class ObjectViewHolder(private val binding: CardObjectBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: ObjectDomain): CardTemplateBinding {
+        fun bind(item: ObjectDomain): CardObjectBinding {
             binding.txtTemplateName.text = item.name
+            binding.txtShortName.text = item.shortname
             binding.root.setOnClickListener { onItemClick(item) }
             return binding
         }
@@ -44,7 +45,7 @@ class ObjectAdapter(private val onItemClick: (item: ObjectDomain) -> Unit) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ObjectViewHolder =
         ObjectViewHolder(
-            CardTemplateBinding.inflate(
+            CardObjectBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false

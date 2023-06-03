@@ -7,5 +7,7 @@ data class ObjectDto(
     @SerializedName("name")
     val name: String?,
     @SerializedName("uuid")
-    val uuid: String?
+    val uuid: String?,
+    @SerializedName("shortname")
+    val shortname: String?
 )

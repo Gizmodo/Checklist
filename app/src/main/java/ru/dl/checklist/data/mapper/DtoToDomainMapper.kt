@@ -13,6 +13,7 @@ object DtoToDomainMapper {
 
     fun ObjectDto.toDomain() = ObjectDomain(
         uuid = uuid ?: "",
-        name = name ?: ""
+        name = name ?: "",
+        shortname = shortname ?: ""
     )
 }

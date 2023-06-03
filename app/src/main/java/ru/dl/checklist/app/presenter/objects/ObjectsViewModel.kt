@@ -60,7 +60,9 @@ class ObjectsViewModel : ViewModel(), ObjectsListContract {
     }
 
     private fun filterList(searchString: String) {
-        val filtered = originalList.filter { item -> item.name.contains(searchString) }
+        val filtered = originalList.filter { item ->
+            item.name.contains(searchString) || item.shortname.contains(searchString)
+        }
         mutableState.update { it.copy(objectsList = filtered) }
     }
 
