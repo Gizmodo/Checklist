@@ -38,7 +38,7 @@ class ChecklistAdapter(
             txtDate.text = item.auditDate
             txtChecker.text = item.checker
             txtSenior.text = item.senior
-
+            txtTitle.text = item.title
             val percent = item.percent.toInt()
             txtPercent.text = "$percent%"
             progressBar.progress = percent

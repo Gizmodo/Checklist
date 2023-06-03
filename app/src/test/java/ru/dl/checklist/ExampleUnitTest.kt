@@ -1,16 +1,7 @@
 package ru.dl.checklist
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
-import org.junit.jupiter.api.assertAll
-import ru.dl.checklist.app.ext.findBy
-import ru.dl.checklist.data.mapper.EntityToDomainMapper.toDomain
-import ru.dl.checklist.data.model.entity.MarkEntity
-import ru.dl.checklist.domain.model.Answer
-import timber.log.Timber
-
 class ExampleUnitTest {
-    @Test
+   /* @Test
     fun `mark mapping`() {
         val entity = MarkEntity(
             id = 0,
@@ -53,5 +44,5 @@ class ExampleUnitTest {
         val answerModel = (Answer::value findBy answerDB) ?: Answer.UNDEFINED
         Timber.Forest.i(answerModel.toString())
         assertEquals(Answer.UNDEFINED, answerModel)
-    }
+    }*/
 }

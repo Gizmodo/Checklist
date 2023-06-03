@@ -8,8 +8,10 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import ru.dl.checklist.data.model.remote.BackendResponseDto
+import ru.dl.checklist.data.model.remote.CheckedObjectsDto
 import ru.dl.checklist.data.model.remote.ChecklistsDto
 import ru.dl.checklist.data.model.remote.ReadyChecklist
+import ru.dl.checklist.data.model.remote.TemplatesDto
 
 
 interface RemoteApi {
@@ -22,4 +24,10 @@ interface RemoteApi {
 
     @POST("/uploadMarks")
     suspend fun uploadMarks(@Body marks: ReadyChecklist): ApiResponse<BackendResponseDto>
+
+    @GET("/templates")
+    suspend fun getTemplates(): ApiResponse<TemplatesDto>
+
+    @GET("/checkedobjects")
+    suspend fun getCheckedObjects(): ApiResponse<CheckedObjectsDto>
 }

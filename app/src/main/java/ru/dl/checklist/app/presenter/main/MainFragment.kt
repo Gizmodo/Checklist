@@ -44,6 +44,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             setHasFixedSize(true)
             adapter = checklistAdapter
         }
+        binding.fabAddChecklist.setOnClickListener {
+            navigateExt(MainFragmentDirections.actionMainFragmentToChecklistTemplateFragment())
+        }
     }
 
     private fun initViewModelObservers() {

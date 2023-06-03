@@ -11,21 +11,18 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ru.dl.checklist.R
 import ru.dl.checklist.app.ext.collectLatestLifecycleFlow
 import ru.dl.checklist.app.ext.createBitmapFromResult
 import ru.dl.checklist.app.ext.getViewModel
 import ru.dl.checklist.app.ext.viewLifecycleLazy
-import ru.dl.checklist.databinding.DialogCommentBinding
+import ru.dl.checklist.app.presenter.bottomsheet.BottomSheetFragment
 import ru.dl.checklist.databinding.FragmentMarksListBinding
-import ru.dl.checklist.domain.model.Answer
 import ru.dl.checklist.domain.model.MarkDomainWithCount
 import timber.log.Timber
 
@@ -33,44 +30,25 @@ class MarksListFragment : Fragment(R.layout.fragment_marks_list) {
     private val args: MarksListFragmentArgs by navArgs()
     private val binding by viewLifecycleLazy(FragmentMarksListBinding::bind)
     private val viewModel: MarksListViewModel by lazy { getViewModel { MarksListViewModel() } }
-    private lateinit var dialog: AlertDialog
     private var itemId: Long = 0
     private var markListAdapter = MarkListAdapter(
         onCardUIEvent = ::onCardUIEvent,
-        onClickAnswer = ::onClickAnswer,
-        onClickAddComment = ::onClickAddComment,
-        onClickAddPhoto = ::onClickAddPhoto
+        onClickAddPhoto = ::onClickAddPhoto,
+        onMarkClick = ::onMarkClick
     )
+
+
+    private fun onMarkClick(item: MarkDomainWithCount) {
+        val bottomSheetFragment = BottomSheetFragment()
+        val bundle = Bundle()
+        bundle.putParcelable("item", item)
+        bottomSheetFragment.arguments = bundle
+        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+    }
 
     private fun onClickAddPhoto(item: MarkDomainWithCount) {
         itemId = item.id
         loadFileFromDevice()
-    }
-
-    private fun onClickAddComment(item: MarkDomainWithCount) {
-        val builder = MaterialAlertDialogBuilder(requireContext())
-        val bind = DialogCommentBinding.inflate(layoutInflater)
-        bind.edtComment.setText(item.comment)
-
-        builder.setView(bind.root)
-            .setCancelable(true)
-            .setTitle(R.string.dialog_comment_title)
-            .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
-                dialog.dismiss()
-            }
-            .setOnDismissListener {
-                dialog.dismiss()
-            }
-            .setPositiveButton(resources.getString(R.string.ok)) { _, _ ->
-                val newComment = bind.edtComment.text.toString()
-                viewModel.onEvent(MarkListEvent.ChangeComment(item.id, newComment))
-            }
-        dialog = builder.show()
-    }
-
-    private fun onClickAnswer(markId: Long, answer: Answer) {
-        Timber.i("Select answer ${answer} for id ${markId} ")
-        viewModel.onEvent(MarkListEvent.ChangeAnswer(markId, answer))
     }
 
     private fun onCardUIEvent(markCardUIEvent: MarkCardUIEvent) {

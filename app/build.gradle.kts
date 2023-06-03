@@ -1,8 +1,8 @@
-
 plugins {
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-kapt")
+    id("kotlin-parcelize")
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.nav.safeargs)
@@ -36,11 +36,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
-        targetCompatibility = JavaVersion.VERSION_19
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "19"
+        jvmTarget = "1.8"
     }
     buildFeatures {
         viewBinding = true
@@ -56,12 +56,10 @@ detekt {
     reportsDir = file("reports_detekt")
 }
 dependencies {
-    testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
     detektPlugins(libs.detekt.formatting)
     detektPlugins(libs.detekt.plugin)
-    implementation (libs.glide)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
@@ -69,11 +67,13 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.recyclerview)
     implementation(libs.arrow.optics)
     implementation(libs.bundles.arrow)
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.room)
     implementation(libs.dagger)
+    implementation(libs.glide)
     implementation(libs.legacy.support.v4)
     implementation(libs.material)
     implementation(libs.sandwich)
@@ -83,4 +83,5 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     ksp(libs.arrow.optics.ksp.plugin)
     testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter)
 }

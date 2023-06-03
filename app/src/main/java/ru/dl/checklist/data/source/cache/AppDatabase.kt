@@ -9,7 +9,6 @@ import ru.dl.checklist.data.model.entity.ChecklistEntity
 import ru.dl.checklist.data.model.entity.MarkEntity
 import ru.dl.checklist.data.model.entity.MediaEntity
 import ru.dl.checklist.data.model.entity.ZoneEntity
-import ru.dl.checklist.data.source.cache.converters.AnswerTypeConverter
 import ru.dl.checklist.data.source.cache.converters.BitmapConverter
 
 @Database(
@@ -20,12 +19,11 @@ import ru.dl.checklist.data.source.cache.converters.BitmapConverter
         MediaEntity::class
     ],
     autoMigrations = [],
-    version = 3,
+    version = 6,
     exportSchema = true,
 )
 @TypeConverters(
-    BitmapConverter::class,
-    AnswerTypeConverter::class
+    BitmapConverter::class
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun checklistDao(): ChecklistDao

@@ -36,11 +36,11 @@ class MainViewModel : ViewModel() {
     lateinit var getChecklistUseCase: dagger.Lazy<GetChecklistUseCase>
     fun onEvent(event: ChecklistEvent) {
         when (event) {
-            ChecklistEvent.LoadChecklist -> loadFoodList()
+            ChecklistEvent.LoadChecklist -> loadChecklist()
         }
     }
 
-    private fun loadFoodList() {
+    private fun loadChecklist() {
         viewModelScope.launch(exceptionHandler) {
             getChecklistUseCase.get().run().collectLatest { apiResult ->
                 when (apiResult) {

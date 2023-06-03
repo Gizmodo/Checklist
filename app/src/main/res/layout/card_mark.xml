@@ -30,36 +30,24 @@
             style="@style/TextAppearance.Material3.BodyMedium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:textStyle="italic|bold"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/txtMarkTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtMarkTitle"
             tools:text="Здесь выводится комментарий к показателю" />
 
-        <RadioGroup
-            android:id="@+id/tbMarkAnswer"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txtPKD"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:gravity="end"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtMarkComment">
-
-            <RadioButton
-                android:id="@+id/btnYes"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:text="@string/yes" />
-
-            <RadioButton
-                android:id="@+id/btnNo"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:text="@string/no" />
-        </RadioGroup>
+            android:textStyle="italic|bold"
+            app:layout_constraintEnd_toEndOf="@+id/txtMarkComment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtMarkComment"
+            tools:text="Здесь выводится ПКД к показателю" />
 
         <RelativeLayout
             android:id="@+id/badgeOuter"
@@ -67,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtMarkComment">
+            app:layout_constraintTop_toBottomOf="@+id/txtPKD">
 
             <RelativeLayout
                 android:id="@+id/badgeInner"
@@ -79,6 +67,7 @@
                     style="?attr/materialIconButtonFilledStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/speakableAttach"
                     app:icon="@drawable/baseline_attach_file_24" />
             </RelativeLayout>
 
@@ -86,20 +75,26 @@
                 android:id="@+id/txtCount"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_alignRight="@id/badgeInner"
+                android:layout_alignEnd="@id/badgeInner"
                 android:background="@drawable/badge_background"
                 android:textColor="#FFFFFF"
                 android:visibility="gone" />
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/btnComment"
-            style="?attr/materialIconButtonFilledStyle"
+        <TextView
+            android:id="@+id/txtSlider"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:icon="@drawable/baseline_add_comment_24"
-            app:layout_constraintStart_toEndOf="@+id/badgeOuter"
-            app:layout_constraintTop_toBottomOf="@+id/txtMarkComment" />
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/txtAnswer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

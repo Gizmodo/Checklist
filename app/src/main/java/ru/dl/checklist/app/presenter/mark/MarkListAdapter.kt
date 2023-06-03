@@ -3,26 +3,66 @@ package ru.dl.checklist.app.presenter.mark
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.dl.checklist.databinding.CardMarkBinding
-import ru.dl.checklist.domain.model.Answer
 import ru.dl.checklist.domain.model.MarkDomainWithCount
 
 class MarkListAdapter(
     private val onCardUIEvent: (MarkCardUIEvent) -> Unit,
-    private val onClickAnswer: (markId: Long, answer: Answer) -> Unit,
-    private val onClickAddComment: (item: MarkDomainWithCount) -> Unit,
-    private val onClickAddPhoto: (item: MarkDomainWithCount) -> Unit
-) : RecyclerView.Adapter<MarkListAdapter.MarkListViewHolder>() {
+    private val onClickAddPhoto: (item: MarkDomainWithCount) -> Unit,
+    private val onMarkClick: (item: MarkDomainWithCount) -> Unit,
+) : ListAdapter<MarkDomainWithCount, MarkListAdapter.MarkListViewHolder>(DiffCallback) {
     private val markList = mutableListOf<MarkDomainWithCount>()
+
+    companion object {
+        private val DiffCallback = object : DiffUtil.ItemCallback<MarkDomainWithCount>() {
+            override fun areItemsTheSame(
+                oldItem: MarkDomainWithCount,
+                newItem: MarkDomainWithCount
+            ): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(
+                oldItem: MarkDomainWithCount,
+                newItem: MarkDomainWithCount
+            ): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
 
     inner class MarkListViewHolder(private val binding: CardMarkBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MarkDomainWithCount): CardMarkBinding {
             //  UI
             binding.txtMarkTitle.text = item.title
-            binding.txtMarkComment.text = item.comment
 
+            when {
+                item.comment.isEmpty() -> {
+                    binding.txtMarkComment.visibility = View.GONE
+                    binding.txtMarkComment.text = ""
+                }
+
+                else -> {
+                    binding.txtMarkComment.visibility = View.VISIBLE
+                    binding.txtMarkComment.text = "Комментарий: " + item.comment
+                }
+            }
+            when {
+                item.pkd.isEmpty() -> {
+                    binding.txtPKD.visibility = View.GONE
+                    binding.txtPKD.text = ""
+                }
+
+                else -> {
+                    binding.txtPKD.visibility = View.VISIBLE
+                    binding.txtPKD.text = "ПКД: " + item.pkd
+                }
+            }
+            binding.txtAnswer.text = "${item.answer}/10"
             when {
                 item.count > 0 -> {
                     binding.txtCount.visibility = View.VISIBLE
@@ -33,17 +73,10 @@ class MarkListAdapter(
                     binding.txtCount.visibility = View.GONE
                 }
             }
-            when (item.answer) {
-                Answer.YES -> binding.btnYes.isChecked = true
-                Answer.NO -> binding.btnNo.isChecked = true
-                Answer.UNDEFINED -> binding.tbMarkAnswer.clearCheck()
-            }
 
             //  Click actions
-            binding.btnYes.setOnClickListener { onClickAnswer(item.id, Answer.YES) }
-            binding.btnNo.setOnClickListener { onClickAnswer(item.id, Answer.NO) }
-            binding.btnComment.setOnClickListener { onClickAddComment(item) }
             binding.btnAttach.setOnClickListener { onClickAddPhoto(item) }
+            binding.root.setOnClickListener { onMarkClick(item) }
 
 
             /* btnYes.setOnClickListener { onCardUIEvent(MarkCardUIEvent.ChangeAnswer(item.copy(answer = Answer.YES))) }

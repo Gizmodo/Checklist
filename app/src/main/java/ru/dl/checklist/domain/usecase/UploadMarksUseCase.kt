@@ -6,5 +6,5 @@ import javax.inject.Inject
 class UploadMarksUseCase @Inject constructor(
     private val repository: CheckListRepository
 ) {
-    fun run(uuid:String) = repository.uploadMarks(uuid)
+    fun run(uuid: String) = repository.uploadMarks(uuid)
 }

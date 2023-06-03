@@ -14,21 +14,15 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import ru.dl.checklist.app.app.App
-import ru.dl.checklist.domain.model.Answer
 import ru.dl.checklist.domain.model.MarkDomainWithCount
 import ru.dl.checklist.domain.usecase.AddPhotoToMarkUseCase
 import ru.dl.checklist.domain.usecase.GetMarkListByZone
-import ru.dl.checklist.domain.usecase.SetMarkAnswerUseCase
-import ru.dl.checklist.domain.usecase.SetMarkCommentUseCase
+import ru.dl.checklist.domain.usecase.UpdateMarkUseCase
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 class MarksListViewModel : ViewModel() {
-    init {
-        App.appComponent.inject(this)
-    }
-
     private var zoneId: Long = 0
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Timber.e(throwable)
@@ -40,30 +34,30 @@ class MarksListViewModel : ViewModel() {
     lateinit var getMarkListByZoneLazy: dagger.Lazy<GetMarkListByZone>
 
     @Inject
-    lateinit var setMarkAnswerUseCase: dagger.Lazy<SetMarkAnswerUseCase>
-
-    @Inject
-    lateinit var setMarkCommentUseCase: dagger.Lazy<SetMarkCommentUseCase>
+    lateinit var updateMarkUseCase: dagger.Lazy<UpdateMarkUseCase>
 
     @Inject
     lateinit var addPhotoToMarkUseCase: dagger.Lazy<AddPhotoToMarkUseCase>
+
+    init {
+        App.appComponent.inject(this)
+    }
+
     fun onEvent(event: MarkListEvent) = when (event) {
         is MarkListEvent.LoadMarkListByZone -> loadMarkList()
-        is MarkListEvent.ChangeAnswer -> updateMark(event.markId, event.answer)
         is MarkListEvent.SetZoneId -> zoneId = event.zoneId
-        is MarkListEvent.ChangeComment -> updateComment(event.markId, event.comment)
         is MarkListEvent.ChangeAttachment -> sendFileRequest(event.markId, event.bitmap)
+        is MarkListEvent.ChangeMark -> updateMark(
+            event.markId,
+            event.comment,
+            event.answer,
+            event.pkd
+        )
     }
 
-    private fun updateMark(markId: Long, answer: Answer) {
+    private fun updateMark(markId: Long, comment: String, answer: Float, pkd: String) {
         viewModelScope.launch(exceptionHandler) {
-            setMarkAnswerUseCase.get().run(markId, answer)
-        }
-    }
-
-    private fun updateComment(markId: Long, comment: String) {
-        viewModelScope.launch(exceptionHandler) {
-            setMarkCommentUseCase.get().run(markId, comment)
+            updateMarkUseCase.get().run(markId, comment, answer, pkd)
         }
     }
 
@@ -87,9 +81,10 @@ class MarksListViewModel : ViewModel() {
 
     private fun loadMarkList() {
         viewModelScope.launch(exceptionHandler) {
-            getMarkListByZoneLazy.get().runWithCount(zoneId).collectLatest { data ->
-                _listChannel.send(data)
-            }
+            getMarkListByZoneLazy.get().runWithCount(zoneId)
+                .collectLatest { data ->
+                    _listChannel.send(data)
+                }
         }
     }
 }
