@@ -30,12 +30,30 @@ interface ZoneDao {
     fun delete(zone: ZoneEntity)
 
     @Query(
-        "SELECT zone.id, zone.zone, round(ifnull(sum(points * answer), 0) / sum(CAST (points AS REAL) ), 4) * 10 AS percent FROM zone\n" +
+        "SELECT zone.id,\n" +
+                "       zone.zone,\n" +
+                "       mark2.percent\n" +
+                "  FROM zone\n" +
                 "       LEFT JOIN\n" +
-                "       mark ON mark.zoneId = zone.id\n" +
-                "       left join \n" +
-                "       checklist on checklist.id=zone.checklistId\n" +
-                " WHERE checklist.uuid=:uuid GROUP BY zone.id"
+                "       (\n" +
+                "           SELECT zoneid,\n" +
+                "                  CASE WHEN mainflag = 0 THEN calc ELSE 0 END AS percent\n" +
+                "             FROM (\n" +
+                "                      SELECT zoneid,\n" +
+                "                             round(sum(points * (answer / 10.0) ) / sum(points) * 100, 2) AS calc,\n" +
+                "                            max(CASE WHEN ( (answer = 10 AND \n" +
+                "                                   flag = 1) OR \n" +
+                "                                  (flag = 0) ) THEN 0 ELSE 1 END) AS mainflag\n" +
+                "                        FROM mark\n" +
+                "                       GROUP BY zoneid\n" +
+                "                  )\n" +
+                "                  AS calc\n" +
+                "       )\n" +
+                "       AS mark2 ON mark2.zoneId = zone.id\n" +
+                "       LEFT JOIN\n" +
+                "       checklist ON checklist.id = zone.checklistId\n" +
+                " WHERE checklist.uuid = :uuid\n" +
+                " GROUP BY zone.id"
     )
     fun getZoneListByChecklist(uuid: String): Flow<List<ZoneDomain>>
 }

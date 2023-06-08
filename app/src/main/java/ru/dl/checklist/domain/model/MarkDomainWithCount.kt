@@ -11,5 +11,6 @@ data class MarkDomainWithCount(
     val answer: Int,
     val comment: String,
     val pkd: String,
-    val count: Int
+    val count: Int,
+    val flag: Int
 ) : Parcelable

@@ -22,6 +22,7 @@ import ru.dl.checklist.app.ext.createBitmapFromResult
 import ru.dl.checklist.app.ext.getViewModel
 import ru.dl.checklist.app.ext.viewLifecycleLazy
 import ru.dl.checklist.app.presenter.bottomsheet.BottomSheetFragment
+import ru.dl.checklist.app.presenter.bottomsheet.BottomSheetYesNoFragment
 import ru.dl.checklist.databinding.FragmentMarksListBinding
 import ru.dl.checklist.domain.model.MarkDomainWithCount
 import timber.log.Timber
@@ -39,7 +40,8 @@ class MarksListFragment : Fragment(R.layout.fragment_marks_list) {
 
 
     private fun onMarkClick(item: MarkDomainWithCount) {
-        val bottomSheetFragment = BottomSheetFragment()
+        val bottomSheetFragment =
+            if (item.flag == 0) BottomSheetFragment() else BottomSheetYesNoFragment()
         val bundle = Bundle()
         bundle.putParcelable("item", item)
         bottomSheetFragment.arguments = bundle

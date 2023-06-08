@@ -7,5 +7,7 @@ data class MarkDto(
     @SerializedName("points")
     val points: Int?,
     @SerializedName("title")
-    val title: String?
+    val title: String?,
+    @SerializedName("flag")
+    val flag: Int?
 )

@@ -27,4 +27,5 @@ data class MarkEntity(
     val answer: Float?,
     val comment: String,
     val pkd: String,
+    val flag: Int
 )

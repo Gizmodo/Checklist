@@ -73,6 +73,11 @@ class MarkListAdapter(
                     binding.txtCount.visibility = View.GONE
                 }
             }
+            binding.txtFlag.visibility = if (item.flag == 1) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
 
             //  Click actions
             binding.btnAttach.setOnClickListener { onClickAddPhoto(item) }

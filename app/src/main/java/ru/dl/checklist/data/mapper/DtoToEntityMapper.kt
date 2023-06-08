@@ -34,7 +34,8 @@ object DtoToEntityMapper {
             title = title ?: "",
             answer = 0f,
             comment = "",
-            pkd = ""
+            pkd = "",
+            flag = flag ?: 0
         )
     }
 }
