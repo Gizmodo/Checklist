@@ -14,4 +14,8 @@
     <string name="speakableAttach">Фотография</string>
     <string name="label_mark">Значение показателя</string>
     <string name="search">Поиск</string>
+    <string name="password">Пароль</string>
+    <string name="login">Логин</string>
+    <string name="logo">Логотип</string>
+    <string name="enter">Войти</string>
 </resources>

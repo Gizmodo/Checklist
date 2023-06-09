@@ -12,6 +12,7 @@ import ru.dl.checklist.data.model.remote.CheckedObjectsDto
 import ru.dl.checklist.data.model.remote.ChecklistsDto
 import ru.dl.checklist.data.model.remote.ReadyChecklist
 import ru.dl.checklist.data.model.remote.TemplatesDto
+import ru.dl.checklist.data.model.remote.UsersListDto
 
 
 interface RemoteApi {
@@ -30,4 +31,7 @@ interface RemoteApi {
 
     @GET("/checkedobjects")
     suspend fun getCheckedObjects(): ApiResponse<CheckedObjectsDto>
+
+    @GET("/users")
+    suspend fun getUsersList(): ApiResponse<UsersListDto>
 }

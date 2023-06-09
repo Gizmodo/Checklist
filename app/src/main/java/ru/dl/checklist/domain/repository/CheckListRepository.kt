@@ -8,6 +8,7 @@ import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.MarkDomainWithCount
 import ru.dl.checklist.domain.model.ObjectDomain
 import ru.dl.checklist.domain.model.TemplateDomain
+import ru.dl.checklist.domain.model.UserDomain
 import ru.dl.checklist.domain.model.ZoneDomain
 
 interface CheckListRepository {
@@ -21,4 +22,5 @@ interface CheckListRepository {
     fun uploadMarks(uuid: String): Flow<ApiResult<BackendResponseDomain>>
     fun getChecklistTemplates(): Flow<ApiResult<List<TemplateDomain>>>
     fun getObjectsList(): Flow<ApiResult<List<ObjectDomain>>>
+    fun getUsersList(): Flow<ApiResult<List<UserDomain>>>
 }

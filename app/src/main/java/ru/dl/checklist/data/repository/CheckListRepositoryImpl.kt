@@ -41,6 +41,7 @@ import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.MarkDomainWithCount
 import ru.dl.checklist.domain.model.ObjectDomain
 import ru.dl.checklist.domain.model.TemplateDomain
+import ru.dl.checklist.domain.model.UserDomain
 import ru.dl.checklist.domain.model.ZoneDomain
 import ru.dl.checklist.domain.repository.CheckListRepository
 import timber.log.Timber
@@ -210,6 +211,20 @@ class CheckListRepositoryImpl @Inject constructor(
                 emit(ApiResult.Success(mapped ?: emptyList()))
             }
             .suspendOnError { emit(errorHandler(this)) }
+            .suspendOnException { emit(exceptionHandler(exception)) }
+    }.onStart { emit(ApiResult.Loading) }
+        .catch {
+            Timber.e(it)
+            emit(ApiResult.Error(it.message.orEmpty()))
+        }
+        .flowOn(dispatcher)
+
+    override fun getUsersList(): Flow<ApiResult<List<UserDomain>>> = flow {
+        val response = remoteDataSource.getUsersList()
+        response.suspendOnSuccess {
+            val mapped = this.data.users?.map { it.toDomain() }
+            emit(ApiResult.Success(mapped ?: emptyList()))
+        }.suspendOnError { emit(errorHandler(this)) }
             .suspendOnException { emit(exceptionHandler(exception)) }
     }.onStart { emit(ApiResult.Loading) }
         .catch {

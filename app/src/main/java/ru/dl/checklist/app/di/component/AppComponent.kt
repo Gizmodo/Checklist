@@ -5,6 +5,7 @@ import ru.dl.checklist.app.app.App
 import ru.dl.checklist.app.di.module.DataBaseModule
 import ru.dl.checklist.app.di.module.DispatcherModule
 import ru.dl.checklist.app.di.module.NetworkModule
+import ru.dl.checklist.app.presenter.auth.AuthViewModel
 import ru.dl.checklist.app.presenter.main.MainViewModel
 import ru.dl.checklist.app.presenter.mark.MarksListViewModel
 import ru.dl.checklist.app.presenter.objects.ObjectsViewModel
@@ -28,6 +29,7 @@ interface AppComponent {
     fun inject(vm: MarksListViewModel)
     fun inject(vm: TemplateViewModel)
     fun inject(vm: ObjectsViewModel)
+    fun inject(vm: AuthViewModel)
 
     @Component.Builder
     interface Builder {
