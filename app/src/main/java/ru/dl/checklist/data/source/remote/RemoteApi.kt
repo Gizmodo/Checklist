@@ -13,6 +13,7 @@ import ru.dl.checklist.data.model.remote.ChecklistsDto
 import ru.dl.checklist.data.model.remote.ReadyChecklist
 import ru.dl.checklist.data.model.remote.TemplatesDto
 import ru.dl.checklist.data.model.remote.UsersListDto
+import ru.dl.checklist.domain.model.AuthPayload
 
 
 interface RemoteApi {
@@ -34,4 +35,7 @@ interface RemoteApi {
 
     @GET("/users")
     suspend fun getUsersList(): ApiResponse<UsersListDto>
+
+    @POST("/auth")
+    suspend fun postAuth(@Body authPayload: AuthPayload): ApiResponse<BackendResponseDto>
 }

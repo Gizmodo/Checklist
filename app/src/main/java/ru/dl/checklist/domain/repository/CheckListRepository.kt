@@ -2,6 +2,7 @@ package ru.dl.checklist.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import ru.dl.checklist.app.utils.ApiResult
+import ru.dl.checklist.domain.model.AuthPayload
 import ru.dl.checklist.domain.model.BackendResponseDomain
 import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
@@ -23,4 +24,5 @@ interface CheckListRepository {
     fun getChecklistTemplates(): Flow<ApiResult<List<TemplateDomain>>>
     fun getObjectsList(): Flow<ApiResult<List<ObjectDomain>>>
     fun getUsersList(): Flow<ApiResult<List<UserDomain>>>
+    fun sendAuth(auth: AuthPayload): Flow<ApiResult<BackendResponseDomain>>
 }

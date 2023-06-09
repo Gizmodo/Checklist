@@ -35,6 +35,7 @@ import ru.dl.checklist.data.source.cache.MarkDao
 import ru.dl.checklist.data.source.cache.MediaDao
 import ru.dl.checklist.data.source.cache.ZoneDao
 import ru.dl.checklist.data.source.remote.RemoteApi
+import ru.dl.checklist.domain.model.AuthPayload
 import ru.dl.checklist.domain.model.BackendResponseDomain
 import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
@@ -224,6 +225,26 @@ class CheckListRepositoryImpl @Inject constructor(
         response.suspendOnSuccess {
             val mapped = this.data.users?.map { it.toDomain() }
             emit(ApiResult.Success(mapped ?: emptyList()))
+        }.suspendOnError { emit(errorHandler(this)) }
+            .suspendOnException { emit(exceptionHandler(exception)) }
+    }.onStart { emit(ApiResult.Loading) }
+        .catch {
+            Timber.e(it)
+            emit(ApiResult.Error(it.message.orEmpty()))
+        }
+        .flowOn(dispatcher)
+
+    override fun sendAuth(auth: AuthPayload): Flow<ApiResult<BackendResponseDomain>> = flow {
+        val response = remoteDataSource.postAuth(auth)
+        response.suspendOnSuccess {
+            val res = response.mapSuccess {
+                BackendResponseDomain(
+                    this.message ?: "Пустое поле message",
+                    this.result ?: false
+                )
+            }.getOrElse(BackendResponseDomain("Ошибка маппинга ответа", false))
+            if (res.result) emit(ApiResult.Success(res))
+            else emit(ApiResult.Error(res.message))
         }.suspendOnError { emit(errorHandler(this)) }
             .suspendOnException { emit(exceptionHandler(exception)) }
     }.onStart { emit(ApiResult.Loading) }

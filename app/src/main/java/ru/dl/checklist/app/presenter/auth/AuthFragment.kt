@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.onEach
 import ru.dl.checklist.R
 import ru.dl.checklist.app.ext.collectLatestLifecycleFlow
 import ru.dl.checklist.app.ext.getViewModel
+import ru.dl.checklist.app.ext.navigateExt
 import ru.dl.checklist.app.ext.textChanges
 import ru.dl.checklist.app.ext.viewLifecycleLazy
 import ru.dl.checklist.databinding.FragmentAuthBinding
@@ -41,7 +42,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         binding.edtPassword.textChanges()
             .onEach {
                 Timber.i("password length = ${it?.length}")
-                viewModel.event(AuthContract.Event.onPasswordChange(password = it.toString()))
+                viewModel.event(AuthContract.Event.OnPasswordChange(password = it.toString()))
             }.launchIn(lifecycleScope)
     }
 
@@ -55,7 +56,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         view.setAdapter(adapter)
         view.setOnItemClickListener { _, _, position, _ ->
             viewModel.event(
-                AuthContract.Event.onUsernameChange(
+                AuthContract.Event.OnUsernameChange(
                     username = items[position].user,
                     group = items[position].group
                 )
@@ -64,21 +65,36 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     }
 
     private fun initViewModelObservers() {
-        collectLatestLifecycleFlow(viewModel.effect) {
-            when (it) {
+        collectLatestLifecycleFlow(viewModel.effect) { effect ->
+            when (effect) {
                 is AuthContract.Effect.ShowMessage -> Toast.makeText(
                     requireContext(),
-                    it.message,
+                    effect.message,
                     Toast.LENGTH_SHORT
                 ).show()
+
+                is AuthContract.Effect.Navigate -> {
+                    Timber.i("Переход на ${effect.direction}")
+                    when (effect.direction) {
+                        NavigationRoute.KD -> viewModel.event(AuthContract.Event.OnShowMessage("Не реализован КД"))
+                        NavigationRoute.SH -> viewModel.event(AuthContract.Event.OnShowMessage("Не реализован СХ"))
+                        NavigationRoute.SelfProduction -> {
+                            navigateExt(AuthFragmentDirections.actionAuthFragmentToMainFragment())
+                        }
+
+                        NavigationRoute.Unknown -> viewModel.event(
+                            AuthContract.Event.OnShowMessage(
+                                "Неизвестная группа пользователя"
+                            )
+                        )
+                    }
+                }
             }
         }
         collectLatestLifecycleFlow(viewModel.state) { state ->
             binding.progressBar.visibility = (if (state.isLoading) View.VISIBLE else View.GONE)
-            Timber.i(state.isLoginButtonEnabled.toString())
             binding.btnEnter.isEnabled = state.isLoginButtonEnabled
             setUsersAdapter(binding.edtUsername, state.usersList)
-            Timber.i("passwordHash = ${state.passwordHash} userHash = ${state.userHash}")
         }
     }
 }

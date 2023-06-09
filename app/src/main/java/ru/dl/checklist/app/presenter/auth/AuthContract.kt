@@ -42,12 +42,14 @@ interface AuthContract : UDFViewModel<AuthContract.State, AuthContract.Event, Au
     }
 
     sealed class Event {
-        data class onUsernameChange(val username: String, val group: String) : Event()
-        data class onPasswordChange(val password: String) : Event()
+        data class OnUsernameChange(val username: String, val group: String) : Event()
+        data class OnPasswordChange(val password: String) : Event()
         data object OnLogin : Event()
+        data class OnShowMessage(val message: String) : Event()
     }
 
     sealed class Effect {
         data class ShowMessage(val message: String) : Effect()
+        data class Navigate(val direction: NavigationRoute) : Effect()
     }
 }
