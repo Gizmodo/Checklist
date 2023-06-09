@@ -2,6 +2,7 @@ package ru.dl.checklist.app.presenter.zone
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,20 +34,24 @@ class ZonesListFragment : Fragment(R.layout.fragment_zones_list) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val checklistUUID = args.checklistUUID
-        viewModel.uuidArgs = checklistUUID
-        Timber.i(checklistUUID)
+        viewModel.uuidArgs = args.checklistUUID
         initUI()
         initViewModelObservers()
-        viewModel.onEvent(ZoneListEvent.LoadZoneListByCategory)
+        viewModel.event(ZonesListContract.Event.OnRefresh)
     }
 
     private fun initViewModelObservers() {
-        collectLatestLifecycleFlow(viewModel.zoneListEvent) {
-            Timber.i("Collected data from ZoneFragment")
-            Timber.d(it.toString())
-            zoneListAdapter.updateList(it)
+        collectLatestLifecycleFlow(viewModel.effect) {
+            when (it) {
+                is ZonesListContract.Effect.ShowToast -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                }
+            }
         }
+        collectLatestLifecycleFlow(viewModel.state) { state ->
+            zoneListAdapter.updateList(state.list)
+        }
+
         collectLatestLifecycleFlow(viewModel.uploadMarksChannel) { result ->
             Timber.i("Результат отправки показателей:")
             when (result) {
@@ -96,7 +101,7 @@ class ZonesListFragment : Fragment(R.layout.fragment_zones_list) {
             adapter = zoneListAdapter
         }
         binding.fabSend.setOnClickListener {
-            viewModel.onEvent(ZoneListEvent.SendChecklist)
+            viewModel.event(ZonesListContract.Event.OnSend)
         }
     }
 

@@ -4,30 +4,45 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.dl.checklist.app.app.App
 import ru.dl.checklist.app.utils.ApiResult
 import ru.dl.checklist.domain.model.BackendResponseDomain
-import ru.dl.checklist.domain.model.ZoneDomain
 import ru.dl.checklist.domain.usecase.GetZoneListByChecklist
 import ru.dl.checklist.domain.usecase.UploadImagesUseCase
 import ru.dl.checklist.domain.usecase.UploadMarksUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
-class ZonesListViewModel : ViewModel() {
+class ZonesListViewModel : ViewModel(), ZonesListContract {
+    var uuidArgs: String = ""
+    private val mutableState = MutableStateFlow(ZonesListContract.State())
+    override val state: StateFlow<ZonesListContract.State>
+        get() = mutableState.asStateFlow()
+
+    private val effectFlow = MutableSharedFlow<ZonesListContract.Effect>()
+    override val effect: SharedFlow<ZonesListContract.Effect>
+        get() = effectFlow.asSharedFlow()
+
     init {
         App.appComponent.inject(this)
     }
 
-    var uuidArgs: String = ""
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Timber.e(throwable)
     }
-    private val _listChannel = Channel<List<ZoneDomain>>()
-    val zoneListEvent = _listChannel.receiveAsFlow()
 
     private val _uploadMarksChannel = Channel<ApiResult<BackendResponseDomain>>()
     val uploadMarksChannel = _uploadMarksChannel.receiveAsFlow()
@@ -43,10 +58,29 @@ class ZonesListViewModel : ViewModel() {
 
     @Inject
     lateinit var uploadImagesUseCase: dagger.Lazy<UploadImagesUseCase>
-    fun onEvent(event: ZoneListEvent) {
+
+    private fun getData(uuid: String) {
+        viewModelScope.launch { getZonesList(uuid) }
+    }
+
+    private suspend fun getZonesList(uuid: String) = getZoneListByChecklist.get().run(uuid)
+        .catch { exception ->
+            effectFlow.emit(
+                ZonesListContract.Effect.ShowToast(
+                    message = exception.localizedMessage ?: "An unexpected error occurred."
+                )
+            )
+        }
+        .onEach { result ->
+            mutableState.update { it.copy(list = result) }
+        }
+        .launchIn(viewModelScope)
+
+    override fun event(event: ZonesListContract.Event) {
         when (event) {
-            ZoneListEvent.LoadZoneListByCategory -> loadZoneList(uuidArgs)
-            ZoneListEvent.SendChecklist -> sendChecklist(uuidArgs)
+            is ZonesListContract.Event.OnItemClick -> TODO()
+            ZonesListContract.Event.OnRefresh -> getData(uuidArgs)
+            ZonesListContract.Event.OnSend -> sendChecklist(uuidArgs)
         }
     }
 
@@ -58,14 +92,6 @@ class ZonesListViewModel : ViewModel() {
             }
             uploadImagesUseCase.get().run(uuid).collectLatest { data ->
                 _uploadImagesChannel.send(data)
-            }
-        }
-    }
-
-    private fun loadZoneList(uuid: String) {
-        viewModelScope.launch(exceptionHandler) {
-            getZoneListByChecklist.get().run(uuid).collectLatest { data ->
-                _listChannel.send(data)
             }
         }
     }
