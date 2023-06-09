@@ -78,7 +78,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             Timber.i(state.isLoginButtonEnabled.toString())
             binding.btnEnter.isEnabled = state.isLoginButtonEnabled
             setUsersAdapter(binding.edtUsername, state.usersList)
-            Timber.i(state.usersList.toString())
+            Timber.i("passwordHash = ${state.passwordHash} userHash = ${state.userHash}")
         }
     }
 }

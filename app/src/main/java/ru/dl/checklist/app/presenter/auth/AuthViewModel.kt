@@ -64,6 +64,13 @@ class AuthViewModel : ViewModel(), AuthContract {
         getData()
     }
 
+    private fun getRouteByGroup(group: String) = when {
+        group.lowercase() == "SelfProduction" -> NavigationRoute.SelfProduction
+        group.lowercase() == "SH" -> NavigationRoute.SH
+        group.lowercase() == "ревизии" -> NavigationRoute.KD
+        else -> NavigationRoute.Unknown
+    }
+
     private fun getData() {
         viewModelScope.launch { getUsersList() }
     }
