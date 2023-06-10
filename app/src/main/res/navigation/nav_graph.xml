@@ -68,7 +68,7 @@
         <action
             android:id="@+id/action_authFragment_to_MainFragment"
             app:destination="@id/MainFragment"
-            app:popUpTo="@id/nav_graph"
+            app:popUpTo="@id/authFragment"
             app:popUpToInclusive="true" />
     </fragment>
 </navigation>
