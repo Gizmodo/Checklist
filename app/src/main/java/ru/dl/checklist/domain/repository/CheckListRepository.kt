@@ -5,6 +5,7 @@ import ru.dl.checklist.app.utils.ApiResult
 import ru.dl.checklist.domain.model.AuthPayload
 import ru.dl.checklist.domain.model.BackendResponseDomain
 import ru.dl.checklist.domain.model.ChecklistDomain
+import ru.dl.checklist.domain.model.HouseChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.MarkDomainWithCount
 import ru.dl.checklist.domain.model.ObjectDomain
@@ -14,6 +15,7 @@ import ru.dl.checklist.domain.model.ZoneDomain
 
 interface CheckListRepository {
     fun getChecklists(): Flow<ApiResult<List<ChecklistDomain>>>
+    fun getHouseChecklists(): Flow<ApiResult<List<HouseChecklistDomain>>>
     fun getZonesByChecklist(uuid: String): Flow<List<ZoneDomain>>
     fun getMarksByZone(zoneId: Long): Flow<List<MarkDomain>>
     fun getMarksByZoneWithCount(zoneId: Long): Flow<List<MarkDomainWithCount>>

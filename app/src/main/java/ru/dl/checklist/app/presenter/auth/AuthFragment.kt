@@ -77,7 +77,10 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                     Timber.i("Переход на ${effect.direction}")
                     when (effect.direction) {
                         NavigationRoute.KD -> viewModel.event(AuthContract.Event.OnShowMessage("Не реализован КД"))
-                        NavigationRoute.SH -> viewModel.event(AuthContract.Event.OnShowMessage("Не реализован СХ"))
+                        NavigationRoute.SH -> {
+                            navigateExt(AuthFragmentDirections.actionAuthFragmentToHouseFragment())
+                        }
+
                         NavigationRoute.SelfProduction -> {
                             navigateExt(AuthFragmentDirections.actionAuthFragmentToMainFragment())
                         }

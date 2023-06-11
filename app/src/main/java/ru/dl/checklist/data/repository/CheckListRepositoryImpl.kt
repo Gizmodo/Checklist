@@ -38,6 +38,7 @@ import ru.dl.checklist.data.source.remote.RemoteApi
 import ru.dl.checklist.domain.model.AuthPayload
 import ru.dl.checklist.domain.model.BackendResponseDomain
 import ru.dl.checklist.domain.model.ChecklistDomain
+import ru.dl.checklist.domain.model.HouseChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.MarkDomainWithCount
 import ru.dl.checklist.domain.model.ObjectDomain
@@ -95,6 +96,24 @@ class CheckListRepositoryImpl @Inject constructor(
             job.join()
             emit(scopeResult)
         }
+            .suspendOnError { emit(errorHandler(this)) }
+            .suspendOnException { emit(exceptionHandler(exception)) }
+    }.onStart { emit(ApiResult.Loading) }
+        .catch {
+            Timber.e(it)
+            emit(ApiResult.Error(it.message.orEmpty()))
+        }
+        .flowOn(dispatcher)
+
+    override fun getHouseChecklists(): Flow<ApiResult<List<HouseChecklistDomain>>> = flow {
+        val response = remoteDataSource.getHouseChecklists()
+        response
+            .suspendOnSuccess {
+                val mapped = this.data.checklistsHouse?.map {
+                    it.toDomain()
+                }
+                emit(ApiResult.Success(mapped ?: emptyList()))
+            }
             .suspendOnError { emit(errorHandler(this)) }
             .suspendOnException { emit(exceptionHandler(exception)) }
     }.onStart { emit(ApiResult.Loading) }

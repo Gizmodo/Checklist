@@ -10,6 +10,7 @@ import retrofit2.http.Part
 import ru.dl.checklist.data.model.remote.BackendResponseDto
 import ru.dl.checklist.data.model.remote.CheckedObjectsDto
 import ru.dl.checklist.data.model.remote.ChecklistsDto
+import ru.dl.checklist.data.model.remote.HouseChecklistsDto
 import ru.dl.checklist.data.model.remote.ReadyChecklist
 import ru.dl.checklist.data.model.remote.TemplatesDto
 import ru.dl.checklist.data.model.remote.UsersListDto
@@ -38,4 +39,7 @@ interface RemoteApi {
 
     @POST("/auth")
     suspend fun postAuth(@Body authPayload: AuthPayload): ApiResponse<BackendResponseDto>
+
+    @GET("/housechecklists")
+    suspend fun getHouseChecklists(): ApiResponse<HouseChecklistsDto>
 }
