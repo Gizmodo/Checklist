@@ -5,6 +5,6 @@ data class HouseCheckDomain(
     val name: String,
     val start: Boolean,
     val end: Boolean,
-    val next: String,
+    val next: String? = null,
     val photoRequired: Boolean
 )

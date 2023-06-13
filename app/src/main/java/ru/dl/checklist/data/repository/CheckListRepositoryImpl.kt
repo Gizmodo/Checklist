@@ -25,12 +25,15 @@ import ru.dl.checklist.app.ext.RetrofitHandler.errorHandler
 import ru.dl.checklist.app.ext.RetrofitHandler.exceptionHandler
 import ru.dl.checklist.app.ext.whenNotNullNorEmpty
 import ru.dl.checklist.app.utils.ApiResult
+import ru.dl.checklist.app.utils.hasOnlyOnePath
 import ru.dl.checklist.data.mapper.DtoToDomainMapper.toDomain
 import ru.dl.checklist.data.mapper.DtoToEntityMapper.toEntity
 import ru.dl.checklist.data.mapper.EntityToDomainMapper.toDomain
 import ru.dl.checklist.data.model.entity.MediaEntity
 import ru.dl.checklist.data.model.remote.ReadyChecklist
 import ru.dl.checklist.data.source.cache.ChecklistDao
+import ru.dl.checklist.data.source.cache.HouseCheckDao
+import ru.dl.checklist.data.source.cache.HouseChecklistDao
 import ru.dl.checklist.data.source.cache.MarkDao
 import ru.dl.checklist.data.source.cache.MediaDao
 import ru.dl.checklist.data.source.cache.ZoneDao
@@ -54,6 +57,8 @@ class CheckListRepositoryImpl @Inject constructor(
     private val zoneDao: ZoneDao,
     private val markDao: MarkDao,
     private val mediaDao: MediaDao,
+    private val houseChecklistDao: HouseChecklistDao,
+    private val houseCheckDao: HouseCheckDao,
     private val remoteDataSource: RemoteApi,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : CheckListRepository {
@@ -106,17 +111,49 @@ class CheckListRepositoryImpl @Inject constructor(
         .flowOn(dispatcher)
 
     override fun getHouseChecklists(): Flow<ApiResult<List<HouseChecklistDomain>>> = flow {
+        val myScope = CoroutineScope(dispatcher)
         val response = remoteDataSource.getHouseChecklists()
-        response
-            .suspendOnSuccess {
-                val mapped = this.data.checklistsHouse?.map {
-                    it.toDomain()
+        response.suspendOnSuccess {
+            var scopeResult: ApiResult<List<HouseChecklistDomain>> = ApiResult.Loading
+            val job = myScope.launch {
+                try {
+                    data.checklistsHouse.whenNotNullNorEmpty { list ->
+                        list.forEach { houseChecklistItem ->
+                            houseChecklistDao.getByUUID(houseChecklistItem.uuid.toString())
+                                .whatIfNotNull(
+                                    whatIf = {},
+                                    whatIfNot = {
+                                        houseChecklistItem.checks.whenNotNullNorEmpty { checkList ->
+                                            val checkListDFS = checkList.map { it.toDomain() }
+                                            val checkResult = hasOnlyOnePath(checkListDFS)
+                                            if (checkResult) {
+                                                val newHouseChecklistId =
+                                                    houseChecklistDao.insert(houseChecklistItem.toEntity())
+                                                houseChecklistItem.checks.whenNotNullNorEmpty { checksList ->
+                                                    checksList.map {
+                                                        it.toEntity(newHouseChecklistId)
+                                                    }.onEach { houseCheckDao.insert(it) }
+                                                }
+                                            }
+                                        }
+                                    }
+                                )
+                        }
+                    }
+                    val houseCheckList = houseChecklistDao.getAll().map { it.toDomain() }
+                    scopeResult = ApiResult.Success(houseCheckList)
+                } catch (e: Exception) {
+                    Timber.e("An error occurred: " + e.message)
+                    scopeResult = ApiResult.Error(e.message.toString())
                 }
-                emit(ApiResult.Success(mapped ?: emptyList()))
             }
+            job.join()
+            emit(scopeResult)
+        }
             .suspendOnError { emit(errorHandler(this)) }
             .suspendOnException { emit(exceptionHandler(exception)) }
-    }.onStart { emit(ApiResult.Loading) }
+    }
+        .onStart { emit(ApiResult.Loading) }
         .catch {
             Timber.e(it)
             emit(ApiResult.Error(it.message.orEmpty()))

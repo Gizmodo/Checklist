@@ -1,9 +1,11 @@
 package ru.dl.checklist.data.mapper
 
 import ru.dl.checklist.data.model.entity.ChecklistEntity
+import ru.dl.checklist.data.model.entity.HouseChecklistEntity
 import ru.dl.checklist.data.model.entity.MarkEntity
 import ru.dl.checklist.data.model.entity.ZoneEntity
 import ru.dl.checklist.domain.model.ChecklistDomain
+import ru.dl.checklist.domain.model.HouseChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.ZoneDomain
 
@@ -26,4 +28,13 @@ object EntityToDomainMapper {
 
     fun MarkEntity.toDomain(): MarkDomain =
         MarkDomain(id, points, title, answer ?: 0f, comment)
+
+    fun HouseChecklistEntity.toDomain(): HouseChecklistDomain {
+        return HouseChecklistDomain(
+            uuid = uuid,
+            title = title,
+            timeEnd = timeEnd,
+            timeStart = timeStart,
+        )
+    }
 }

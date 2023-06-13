@@ -29,7 +29,6 @@ object DtoToDomainMapper {
     )
 
     fun HouseChecklistDto.toDomain() = HouseChecklistDomain(
-        checks = checks?.map { it.toDomain() } ?: emptyList(),
         timeEnd = timeEnd ?: "",
         timeStart = timeStart ?: "",
         title = title ?: "",
@@ -41,7 +40,7 @@ object DtoToDomainMapper {
         name = name ?: "",
         start = start ?: false,
         end = end ?: false,
-        next = next ?: "",
+        next = next,
         photoRequired = photoRequired ?: false
     )
 }
