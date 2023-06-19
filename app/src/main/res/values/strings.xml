@@ -18,4 +18,7 @@
     <string name="login">Логин</string>
     <string name="logo">Логотип</string>
     <string name="enter">Войти</string>
+    <string name="send">Отправить</string>
+    <string name="prev">Назад</string>
+    <string name="next">Далее</string>
 </resources>

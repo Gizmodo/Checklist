@@ -29,11 +29,13 @@ import ru.dl.checklist.app.utils.hasOnlyOnePath
 import ru.dl.checklist.data.mapper.DtoToDomainMapper.toDomain
 import ru.dl.checklist.data.mapper.DtoToEntityMapper.toEntity
 import ru.dl.checklist.data.mapper.EntityToDomainMapper.toDomain
+import ru.dl.checklist.data.model.entity.HouseMediaEntity
 import ru.dl.checklist.data.model.entity.MediaEntity
 import ru.dl.checklist.data.model.remote.ReadyChecklist
 import ru.dl.checklist.data.source.cache.ChecklistDao
 import ru.dl.checklist.data.source.cache.HouseCheckDao
 import ru.dl.checklist.data.source.cache.HouseChecklistDao
+import ru.dl.checklist.data.source.cache.HouseMediaDao
 import ru.dl.checklist.data.source.cache.MarkDao
 import ru.dl.checklist.data.source.cache.MediaDao
 import ru.dl.checklist.data.source.cache.ZoneDao
@@ -41,6 +43,7 @@ import ru.dl.checklist.data.source.remote.RemoteApi
 import ru.dl.checklist.domain.model.AuthPayload
 import ru.dl.checklist.domain.model.BackendResponseDomain
 import ru.dl.checklist.domain.model.ChecklistDomain
+import ru.dl.checklist.domain.model.HouseCheckDomain
 import ru.dl.checklist.domain.model.HouseChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.MarkDomainWithCount
@@ -59,6 +62,7 @@ class CheckListRepositoryImpl @Inject constructor(
     private val mediaDao: MediaDao,
     private val houseChecklistDao: HouseChecklistDao,
     private val houseCheckDao: HouseCheckDao,
+    private val houseMediaDao: HouseMediaDao,
     private val remoteDataSource: RemoteApi,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : CheckListRepository {
@@ -160,6 +164,11 @@ class CheckListRepositoryImpl @Inject constructor(
         }
         .flowOn(dispatcher)
 
+    override fun getHouseChecks(uuid: String): Flow<List<HouseCheckDomain>> {
+        val inter = houseCheckDao.getHouseChecksByUUID(uuid)
+        return inter.flowOn(dispatcher)
+    }
+
     override fun getZonesByChecklist(uuid: String): Flow<List<ZoneDomain>> {
         val inter = zoneDao.getZoneListByChecklist(uuid)
         return inter.flowOn(dispatcher)
@@ -180,11 +189,22 @@ class CheckListRepositoryImpl @Inject constructor(
         withContext(dispatcher) { markDao.updateMark(markId, comment, answer, pkd) }
     }
 
+    override suspend fun updateHouseAnswer(houseCheckId: Long, answer: Boolean) {
+        withContext(dispatcher) { houseCheckDao.updateCheck(houseCheckId, answer) }
+    }
+
     override suspend fun addPhoto(markId: Long, byteArray: ByteArray) {
         withContext(dispatcher) {
             val mediaEntity = MediaEntity(markId = markId, media = byteArray)
             val res = mediaDao.insert(mediaEntity)
             Timber.i("mediaId: $res")
+        }
+    }
+
+    override suspend fun addHousePhoto(houseCheckId: Long, byteArray: ByteArray) {
+        withContext(dispatcher) {
+            val houseMediaEntity = HouseMediaEntity(houseCheckId = houseCheckId, media = byteArray)
+            val res = houseMediaDao.insert(houseMediaEntity)
         }
     }
 

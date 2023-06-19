@@ -60,7 +60,8 @@ object DtoToEntityMapper {
             isPhotoRequired = photoRequired ?: false,
             isStart = start ?: false,
             isEnd = end ?: false,
-            nextCheckUUID = next
+            nextCheckUUID = next,
+            answer = null
         )
     }
 }

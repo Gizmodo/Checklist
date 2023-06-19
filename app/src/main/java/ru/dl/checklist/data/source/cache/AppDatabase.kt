@@ -8,6 +8,7 @@ import androidx.room.TypeConverters
 import ru.dl.checklist.data.model.entity.ChecklistEntity
 import ru.dl.checklist.data.model.entity.HouseCheckEntity
 import ru.dl.checklist.data.model.entity.HouseChecklistEntity
+import ru.dl.checklist.data.model.entity.HouseMediaEntity
 import ru.dl.checklist.data.model.entity.MarkEntity
 import ru.dl.checklist.data.model.entity.MediaEntity
 import ru.dl.checklist.data.model.entity.ZoneEntity
@@ -20,10 +21,11 @@ import ru.dl.checklist.data.source.cache.converters.BitmapConverter
         MarkEntity::class,
         MediaEntity::class,
         HouseChecklistEntity::class,
-        HouseCheckEntity::class
+        HouseCheckEntity::class,
+        HouseMediaEntity::class,
     ],
     autoMigrations = [],
-    version = 8,
+    version = 11,
     exportSchema = true,
 )
 @TypeConverters(
@@ -36,6 +38,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun mediaDao(): MediaDao
     abstract fun houseDao(): HouseChecklistDao
     abstract fun houseCheckDao(): HouseCheckDao
+    abstract fun houseMediaDao(): HouseMediaDao
 
     companion object {
         @Volatile

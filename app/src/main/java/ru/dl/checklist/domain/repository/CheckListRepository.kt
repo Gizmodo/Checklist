@@ -5,6 +5,7 @@ import ru.dl.checklist.app.utils.ApiResult
 import ru.dl.checklist.domain.model.AuthPayload
 import ru.dl.checklist.domain.model.BackendResponseDomain
 import ru.dl.checklist.domain.model.ChecklistDomain
+import ru.dl.checklist.domain.model.HouseCheckDomain
 import ru.dl.checklist.domain.model.HouseChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
 import ru.dl.checklist.domain.model.MarkDomainWithCount
@@ -16,11 +17,14 @@ import ru.dl.checklist.domain.model.ZoneDomain
 interface CheckListRepository {
     fun getChecklists(): Flow<ApiResult<List<ChecklistDomain>>>
     fun getHouseChecklists(): Flow<ApiResult<List<HouseChecklistDomain>>>
+    fun getHouseChecks(uuid: String): Flow<List<HouseCheckDomain>>
     fun getZonesByChecklist(uuid: String): Flow<List<ZoneDomain>>
     fun getMarksByZone(zoneId: Long): Flow<List<MarkDomain>>
     fun getMarksByZoneWithCount(zoneId: Long): Flow<List<MarkDomainWithCount>>
     suspend fun updateMark(markId: Long, comment: String, answer: Float, pkd: String)
+    suspend fun updateHouseAnswer(houseCheckId: Long, answer: Boolean)
     suspend fun addPhoto(markId: Long, byteArray: ByteArray)
+    suspend fun addHousePhoto(houseCheckId: Long, byteArray: ByteArray)
     fun uploadImages(uuid: String): Flow<ApiResult<BackendResponseDomain>>
     fun uploadMarks(uuid: String): Flow<ApiResult<BackendResponseDomain>>
     fun getChecklistTemplates(): Flow<ApiResult<List<TemplateDomain>>>

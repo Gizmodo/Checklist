@@ -4,8 +4,8 @@ import ru.dl.checklist.domain.model.HouseCheckDomain
 import java.util.Stack
 
 fun hasOnlyOnePath(checklist: List<HouseCheckDomain>): Boolean {
-    val startItem = checklist.firstOrNull { it.start } ?: return false
-    val endItem = checklist.firstOrNull { it.end } ?: return false
+    val startItem = checklist.firstOrNull { it.isStart } ?: return false
+    val endItem = checklist.firstOrNull { it.isEnd } ?: return false
 
     // Use a set to keep track of visited items
     val visited = mutableSetOf<HouseCheckDomain>()
@@ -30,7 +30,7 @@ fun hasOnlyOnePath(checklist: List<HouseCheckDomain>): Boolean {
         }
 
         // Add the next item(s) to the stack for further traversal
-        val nextUuid = currentItem.next
+        val nextUuid = currentItem.next_check_uuid
         if (nextUuid != null) {
             val nextItem = checklist.find { it.uuid == nextUuid } ?: continue
             stack.push(nextItem)

@@ -29,4 +29,5 @@ data class HouseCheckEntity(
     @ColumnInfo(name = "next_check_uuid") val nextCheckUUID: String?,
     @ColumnInfo(name = "isStart") val isStart: Boolean,
     @ColumnInfo(name = "isEnd") val isEnd: Boolean,
+    @ColumnInfo(name = "answer") val answer: Boolean?,
 )

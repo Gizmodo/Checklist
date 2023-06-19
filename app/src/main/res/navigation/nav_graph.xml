@@ -80,5 +80,18 @@
         android:id="@+id/houseFragment"
         android:name="ru.dl.checklist.app.presenter.house.main.HouseFragment"
         android:label="Чеклисты"
-        tools:layout="@layout/fragment_house" />
+        tools:layout="@layout/fragment_house" >
+        <action
+            android:id="@+id/action_houseFragment_to_houseCheckFragment"
+            app:destination="@id/houseCheckFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/houseCheckFragment"
+        android:name="ru.dl.checklist.app.presenter.house.check.HouseCheckFragment"
+        android:label="Чеклист"
+        tools:layout="@layout/fragment_house_check" >
+        <argument
+            android:name="houseChecklistUUID"
+            app:argType="string" />
+    </fragment>
 </navigation>

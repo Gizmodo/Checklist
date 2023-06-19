@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 8,
-    "identityHash": "d19a231f3496f4300bdc54e83b7af39b",
+    "version": 10,
+    "identityHash": "b2351e51f4ab9fcbff2d2d8131cddd44",
     "entities": [
       {
         "tableName": "checklist",
@@ -391,12 +391,66 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "house_media",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `houseCheckId` INTEGER NOT NULL, `media` BLOB, FOREIGN KEY(`houseCheckId`) REFERENCES `mark`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "houseCheckId",
+            "columnName": "houseCheckId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "media",
+            "columnName": "media",
+            "affinity": "BLOB",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_house_media_houseCheckId",
+            "unique": false,
+            "columnNames": [
+              "houseCheckId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_house_media_houseCheckId` ON `${TABLE_NAME}` (`houseCheckId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "mark",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "houseCheckId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd19a231f3496f4300bdc54e83b7af39b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b2351e51f4ab9fcbff2d2d8131cddd44')"
     ]
   }
 }

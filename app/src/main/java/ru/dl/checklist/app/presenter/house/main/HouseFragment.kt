@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import ru.dl.checklist.R
 import ru.dl.checklist.app.ext.collectLatestLifecycleFlow
 import ru.dl.checklist.app.ext.getViewModel
+import ru.dl.checklist.app.ext.navigateExt
 import ru.dl.checklist.app.ext.viewLifecycleLazy
 import ru.dl.checklist.databinding.FragmentHouseBinding
 import ru.dl.checklist.domain.model.HouseChecklistDomain
@@ -20,7 +21,7 @@ class HouseFragment : Fragment(R.layout.fragment_house) {
     private var checklistAdapter = HouseAdapter(mutableListOf(), ::onItemClick)
 
     private fun onItemClick(item: HouseChecklistDomain) {
-        // TODO: navigate next screen
+        navigateExt(HouseFragmentDirections.actionHouseFragmentToHouseCheckFragment(item.uuid))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

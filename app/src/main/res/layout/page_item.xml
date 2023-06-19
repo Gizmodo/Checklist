@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/txtQuestion"
+        style="@style/TextAppearance.Material3.BodyLarge"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Отодвигаем столы, холодильники ( горячий цех, мойки, корридоры)" />
+
+    <RelativeLayout
+        android:id="@+id/badgeOuter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtQuestion">
+
+        <RelativeLayout
+            android:id="@+id/badgeInner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btnAttach"
+                style="?attr/materialIconButtonFilledStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/speakableAttach"
+                app:icon="@drawable/baseline_attach_file_24" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/txtCount"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignEnd="@id/badgeInner"
+            android:background="@drawable/badge_background"
+            android:textColor="#FFFFFF"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtQuestion">
+
+        <RadioButton
+            android:id="@+id/btnNo"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="@string/no" />
+
+        <RadioButton
+            android:id="@+id/btnYes"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="@string/yes" />
+    </RadioGroup>
+</androidx.constraintlayout.widget.ConstraintLayout>

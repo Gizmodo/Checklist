@@ -9,6 +9,7 @@ import ru.dl.checklist.data.source.cache.AppDatabase
 import ru.dl.checklist.data.source.cache.ChecklistDao
 import ru.dl.checklist.data.source.cache.HouseCheckDao
 import ru.dl.checklist.data.source.cache.HouseChecklistDao
+import ru.dl.checklist.data.source.cache.HouseMediaDao
 import ru.dl.checklist.data.source.cache.MarkDao
 import ru.dl.checklist.data.source.cache.MediaDao
 import ru.dl.checklist.data.source.cache.ZoneDao
@@ -42,6 +43,10 @@ class DataBaseModule(private val application: Application) {
     @Singleton
     @Provides
     fun provideHouseCheckDao(database: AppDatabase): HouseCheckDao = database.houseCheckDao()
+
+    @Singleton
+    @Provides
+    fun provideHouseMediaDao(database: AppDatabase): HouseMediaDao = database.houseMediaDao()
 
     @Provides
     @Singleton

@@ -38,9 +38,12 @@ object DtoToDomainMapper {
     fun HouseCheckDto.toDomain() = HouseCheckDomain(
         uuid = uuid ?: "",
         name = name ?: "",
-        start = start ?: false,
-        end = end ?: false,
-        next = next,
-        photoRequired = photoRequired ?: false
+        isStart = start ?: false,
+        isEnd = end ?: false,
+        next_check_uuid = next,
+        isPhotoRequired = photoRequired ?: false,
+        id = 0,
+        checklistId = 0,
+        mediacount = 0
     )
 }
