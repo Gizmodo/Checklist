@@ -48,15 +48,6 @@ class ObjectsViewModel : ViewModel(), ObjectsListContract {
 
         ObjectsListContract.Event.OnRefresh -> getData()
         is ObjectsListContract.Event.OnSearch -> filterList(event.searchString)
-        is ObjectsListContract.Event.OnSendAssignment -> sendAssigmnment(
-            event.objectUUID,
-            event.checklistUUID
-        )
-    }
-
-    private fun sendAssigmnment(objectUUID: String, checklistUUID: String) {
-        Timber.i("Назначен $checklistUUID на $objectUUID")
-        // TODO: Add POST request
     }
 
     private fun filterList(searchString: String) {
@@ -67,10 +58,10 @@ class ObjectsViewModel : ViewModel(), ObjectsListContract {
     }
 
     private fun getData() {
-        viewModelScope.launch { getNewsList() }
+        viewModelScope.launch { getTemplatesByUser() }
     }
 
-    private suspend fun getNewsList() = getObjectsListUseCase.get().run()
+    private suspend fun getTemplatesByUser() = getObjectsListUseCase.get().run()
         .catch { exception ->
             effectFlow.emit(
                 ObjectsListContract.Effect.ShowToast(

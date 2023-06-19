@@ -4,13 +4,16 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import ru.dl.checklist.R
+import ru.dl.checklist.app.ext.alert
 import ru.dl.checklist.app.ext.collectLatestLifecycleFlow
 import ru.dl.checklist.app.ext.getViewModel
-import ru.dl.checklist.app.ext.navigateExt
+import ru.dl.checklist.app.ext.negativeButton
+import ru.dl.checklist.app.ext.positiveButton
 import ru.dl.checklist.app.ext.viewLifecycleLazy
 import ru.dl.checklist.databinding.FragmentChecklistTemplateBinding
 import ru.dl.checklist.domain.model.TemplateDomain
@@ -20,14 +23,21 @@ class TemplateChecklistFragment : Fragment(R.layout.fragment_checklist_template)
     private val viewModel: TemplateViewModel by lazy { getViewModel { TemplateViewModel() } }
     private lateinit var swipe: SwipeRefreshLayout
     private var templateAdapter = TemplateAdapter(onItemClick = ::onItemClick)
-
+    private val args: TemplateChecklistFragmentArgs by navArgs()
     private fun onItemClick(item: TemplateDomain) {
-        navigateExt(
-            TemplateChecklistFragmentDirections.actionChecklistTemplateFragmentToObjectsFragment(
-                /* templateUuid = */ item.uuid,
-                /* templateName = */ item.name
-            )
-        )
+        requireContext().alert {
+            setTitle("Внимание")
+            setMessage("Назначить ${item.name} на ${args.objectName}?")
+            positiveButton {
+                viewModel.event(
+                    TemplatesListContract.Event.OnSendAssignment(
+                        objectUUID = args.objectUuid,
+                        checklistUUID = item.uuid,
+                    )
+                )
+            }
+            negativeButton { }
+        }
     }
 
     private fun isProgressVisible(isVisible: Boolean) {
@@ -48,6 +58,7 @@ class TemplateChecklistFragment : Fragment(R.layout.fragment_checklist_template)
         super.onViewCreated(view, savedInstanceState)
         initUI()
         initViewModelObservers()
+        viewModel.event(TemplatesListContract.Event.OnChangeObjectUUID(args.objectUuid))
     }
 
     private fun initViewModelObservers() {
@@ -57,7 +68,7 @@ class TemplateChecklistFragment : Fragment(R.layout.fragment_checklist_template)
 
                 }
 
-                is TemplatesListContract.Effect.ShowToast -> {
+                is TemplatesListContract.Effect.ShowMessage -> {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
             }

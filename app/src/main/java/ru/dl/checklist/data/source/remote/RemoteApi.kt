@@ -15,6 +15,7 @@ import ru.dl.checklist.data.model.remote.HouseChecklistsDto
 import ru.dl.checklist.data.model.remote.ReadyChecklist
 import ru.dl.checklist.data.model.remote.TemplatesDto
 import ru.dl.checklist.data.model.remote.UsersListDto
+import ru.dl.checklist.domain.model.AssignedTemplateObject
 import ru.dl.checklist.domain.model.AuthPayload
 
 
@@ -30,10 +31,10 @@ interface RemoteApi {
     suspend fun uploadMarks(@Body marks: ReadyChecklist): ApiResponse<BackendResponseDto>
 
     @GET("/templates")
-    suspend fun getTemplates(): ApiResponse<TemplatesDto>
+    suspend fun getTemplates(@Query("objectuuid") objectUUID: String): ApiResponse<TemplatesDto>
 
     @GET("/checkedobjects")
-    suspend fun getCheckedObjects(): ApiResponse<CheckedObjectsDto>
+    suspend fun getCheckedObjects(@Query("user") user: String): ApiResponse<CheckedObjectsDto>
 
     @GET("/users")
     suspend fun getUsersList(): ApiResponse<UsersListDto>
@@ -43,4 +44,7 @@ interface RemoteApi {
 
     @GET("/housechecklists")
     suspend fun getHouseChecklists(@Query("user") user: String): ApiResponse<HouseChecklistsDto>
+
+    @POST("/assign")
+    suspend fun postTemplateByObject(@Body payload: AssignedTemplateObject): ApiResponse<BackendResponseDto>
 }

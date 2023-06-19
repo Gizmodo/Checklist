@@ -45,7 +45,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             adapter = checklistAdapter
         }
         binding.fabAddChecklist.setOnClickListener {
-            navigateExt(MainFragmentDirections.actionMainFragmentToChecklistTemplateFragment())
+            navigateExt(MainFragmentDirections.actionMainFragmentToObjectsFragment())
         }
     }
 

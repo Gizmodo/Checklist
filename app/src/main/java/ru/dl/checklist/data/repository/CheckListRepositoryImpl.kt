@@ -41,6 +41,7 @@ import ru.dl.checklist.data.source.cache.MarkDao
 import ru.dl.checklist.data.source.cache.MediaDao
 import ru.dl.checklist.data.source.cache.ZoneDao
 import ru.dl.checklist.data.source.remote.RemoteApi
+import ru.dl.checklist.domain.model.AssignedTemplateObject
 import ru.dl.checklist.domain.model.AuthPayload
 import ru.dl.checklist.domain.model.BackendResponseDomain
 import ru.dl.checklist.domain.model.ChecklistDomain
@@ -265,24 +266,25 @@ class CheckListRepositoryImpl @Inject constructor(
         }
         .flowOn(dispatcher)
 
-    override fun getChecklistTemplates(): Flow<ApiResult<List<TemplateDomain>>> = flow {
-        val response = remoteDataSource.getTemplates()
-        response
-            .suspendOnSuccess {
-                val mapped = this.data.templates?.map { it.toDomain() }
-                emit(ApiResult.Success(mapped ?: emptyList()))
+    override fun getChecklistTemplates(objectUUID: String): Flow<ApiResult<List<TemplateDomain>>> =
+        flow {
+            val response = remoteDataSource.getTemplates(objectUUID)
+            response
+                .suspendOnSuccess {
+                    val mapped = this.data.templates?.map { it.toDomain() }
+                    emit(ApiResult.Success(mapped ?: emptyList()))
+                }
+                .suspendOnError { emit(errorHandler(this)) }
+                .suspendOnException { emit(exceptionHandler(exception)) }
+        }.onStart { emit(ApiResult.Loading) }
+            .catch {
+                Timber.e(it)
+                emit(ApiResult.Error(it.message.orEmpty()))
             }
-            .suspendOnError { emit(errorHandler(this)) }
-            .suspendOnException { emit(exceptionHandler(exception)) }
-    }.onStart { emit(ApiResult.Loading) }
-        .catch {
-            Timber.e(it)
-            emit(ApiResult.Error(it.message.orEmpty()))
-        }
-        .flowOn(dispatcher)
+            .flowOn(dispatcher)
 
     override fun getObjectsList(): Flow<ApiResult<List<ObjectDomain>>> = flow {
-        val response = remoteDataSource.getCheckedObjects()
+        val response = remoteDataSource.getCheckedObjects(currentUser)
         response
             .suspendOnSuccess {
                 val mapped = this.data.objects?.map { it.toDomain() }
@@ -310,6 +312,27 @@ class CheckListRepositoryImpl @Inject constructor(
             emit(ApiResult.Error(it.message.orEmpty()))
         }
         .flowOn(dispatcher)
+
+    override fun sendAssignTemplateByObject(payload: AssignedTemplateObject): Flow<ApiResult<BackendResponseDomain>> =
+        flow {
+            val response = remoteDataSource.postTemplateByObject(payload)
+            response.suspendOnSuccess {
+                val res = response.mapSuccess {
+                    BackendResponseDomain(
+                        this.message ?: "Пустое поле message",
+                        this.result ?: false
+                    )
+                }.getOrElse(BackendResponseDomain("Ошибка маппинга ответа", false))
+                if (res.result) emit(ApiResult.Success(res))
+                else emit(ApiResult.Error(res.message))
+            }.suspendOnError { emit(errorHandler(this)) }
+                .suspendOnException { emit(exceptionHandler(exception)) }
+        }.onStart { emit(ApiResult.Loading) }
+            .catch {
+                Timber.e(it)
+                emit(ApiResult.Error(it.message.orEmpty()))
+            }
+            .flowOn(dispatcher)
 
     override fun sendAuth(auth: AuthPayload): Flow<ApiResult<BackendResponseDomain>> = flow {
         val response = remoteDataSource.postAuth(auth)

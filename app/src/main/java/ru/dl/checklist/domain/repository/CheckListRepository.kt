@@ -2,6 +2,7 @@ package ru.dl.checklist.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import ru.dl.checklist.app.utils.ApiResult
+import ru.dl.checklist.domain.model.AssignedTemplateObject
 import ru.dl.checklist.domain.model.AuthPayload
 import ru.dl.checklist.domain.model.BackendResponseDomain
 import ru.dl.checklist.domain.model.ChecklistDomain
@@ -27,8 +28,9 @@ interface CheckListRepository {
     suspend fun addHousePhoto(houseCheckId: Long, byteArray: ByteArray)
     fun uploadImages(uuid: String): Flow<ApiResult<BackendResponseDomain>>
     fun uploadMarks(uuid: String): Flow<ApiResult<BackendResponseDomain>>
-    fun getChecklistTemplates(): Flow<ApiResult<List<TemplateDomain>>>
+    fun getChecklistTemplates(objectUUID: String): Flow<ApiResult<List<TemplateDomain>>>
     fun getObjectsList(): Flow<ApiResult<List<ObjectDomain>>>
     fun getUsersList(): Flow<ApiResult<List<UserDomain>>>
     fun sendAuth(auth: AuthPayload): Flow<ApiResult<BackendResponseDomain>>
+    fun sendAssignTemplateByObject(payload: AssignedTemplateObject): Flow<ApiResult<BackendResponseDomain>>
 }

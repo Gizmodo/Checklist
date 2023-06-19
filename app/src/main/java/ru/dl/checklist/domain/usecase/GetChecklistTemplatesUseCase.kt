@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetChecklistTemplatesUseCase @Inject constructor(
     private val repository: CheckListRepository
 ) {
-    fun run() = repository.getChecklistTemplates()
+    fun run(objectUUID: String) = repository.getChecklistTemplates(objectUUID)
 }

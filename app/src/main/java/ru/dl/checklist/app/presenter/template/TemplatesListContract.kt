@@ -9,15 +9,18 @@ interface TemplatesListContract :
 
     data class State(
         val templatesList: List<TemplateDomain> = listOf(),
-        val refreshing: Boolean = false
+        val refreshing: Boolean = false,
+        val objectUUID: String = String()
     )
 
     sealed class Event {
-        object OnRefresh : Event()
+        data object OnRefresh : Event()
+        data class OnSendAssignment(val objectUUID: String, val checklistUUID: String) : Event()
+        data class OnChangeObjectUUID(val objectUUID: String) : Event()
     }
 
     sealed class Effect {
-        object OnBackPressed : Effect()
-        data class ShowToast(val message: String) : Effect()
+        data object OnBackPressed : Effect()
+        data class ShowMessage(val message: String) : Effect()
     }
 }

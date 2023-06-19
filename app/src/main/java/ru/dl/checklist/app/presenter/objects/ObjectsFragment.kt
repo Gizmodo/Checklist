@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -14,36 +13,27 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import ru.dl.checklist.R
-import ru.dl.checklist.app.ext.alert
 import ru.dl.checklist.app.ext.collectLatestLifecycleFlow
 import ru.dl.checklist.app.ext.getViewModel
-import ru.dl.checklist.app.ext.negativeButton
-import ru.dl.checklist.app.ext.positiveButton
+import ru.dl.checklist.app.ext.navigateExt
 import ru.dl.checklist.app.ext.textChanges
 import ru.dl.checklist.app.ext.viewLifecycleLazy
 import ru.dl.checklist.databinding.FragmentObjectsBinding
 import ru.dl.checklist.domain.model.ObjectDomain
 
 class ObjectsFragment : Fragment(R.layout.fragment_objects) {
-    private val args: ObjectsFragmentArgs by navArgs()
     private val binding by viewLifecycleLazy(FragmentObjectsBinding::bind)
     private val viewModel: ObjectsViewModel by lazy { getViewModel { ObjectsViewModel() } }
     private lateinit var swipe: SwipeRefreshLayout
     private var objectAdapter = ObjectAdapter(onItemClick = ::onItemClick)
     private fun onItemClick(item: ObjectDomain) {
-        requireContext().alert {
-            setTitle("Внимание")
-            setMessage("Назначить ${args.templateName} на ${item.name}?")
-            positiveButton {
-                viewModel.event(
-                    ObjectsListContract.Event.OnSendAssignment(
-                        item.uuid,
-                        args.templateUuid
-                    )
-                )
-            }
-            negativeButton { }
-        }
+        navigateExt(
+            ObjectsFragmentDirections.actionObjectsFragmentToChecklistTemplateFragment(
+                /* objectUuid = */ item.uuid,
+                /* objectName = */ item.name
+            )
+        )
+
     }
 
     private fun isProgressVisible(isVisible: Boolean) {

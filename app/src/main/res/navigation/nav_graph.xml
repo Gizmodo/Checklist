@@ -15,8 +15,8 @@
             android:id="@+id/action_MainFragment_to_zonesListFragment"
             app:destination="@id/zonesListFragment" />
         <action
-            android:id="@+id/action_MainFragment_to_checklistTemplateFragment"
-            app:destination="@id/checklistTemplateFragment" />
+            android:id="@+id/action_MainFragment_to_objectsFragment"
+            app:destination="@id/objectsFragment" />
     </fragment>
     <fragment
         android:id="@+id/zonesListFragment"
@@ -44,21 +44,21 @@
         android:name="ru.dl.checklist.app.presenter.template.TemplateChecklistFragment"
         android:label="Назначение чеклиста"
         tools:layout="@layout/fragment_checklist_template" >
-        <action
-            android:id="@+id/action_checklistTemplateFragment_to_objectsFragment"
-            app:destination="@id/objectsFragment" />
+        <argument
+            android:name="object_uuid"
+            app:argType="string" />
+        <argument
+            android:name="object_name"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/objectsFragment"
         android:name="ru.dl.checklist.app.presenter.objects.ObjectsFragment"
         android:label="Магазины"
         tools:layout="@layout/fragment_objects" >
-        <argument
-            android:name="template_uuid"
-            app:argType="string" />
-        <argument
-            android:name="template_name"
-            app:argType="string" />
+        <action
+            android:id="@+id/action_objectsFragment_to_checklistTemplateFragment"
+            app:destination="@id/checklistTemplateFragment" />
     </fragment>
     <fragment
         android:id="@+id/authFragment"
@@ -68,12 +68,10 @@
         <action
             android:id="@+id/action_authFragment_to_MainFragment"
             app:destination="@id/MainFragment"
-            app:popUpTo="@id/authFragment"
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_authFragment_to_houseFragment"
             app:destination="@id/houseFragment"
-            app:popUpTo="@id/authFragment"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment

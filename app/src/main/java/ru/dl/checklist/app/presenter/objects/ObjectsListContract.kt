@@ -13,8 +13,7 @@ interface ObjectsListContract : UDFViewModel<ObjectsListContract.State,
     sealed class Event {
         data class OnSearch(val searchString: String) : Event()
         data class OnItemClick(val item: ObjectDomain) : Event()
-        data class OnSendAssignment(val objectUUID: String, val checklistUUID: String) : Event()
-        object OnRefresh : Event()
+        data object OnRefresh : Event()
     }
 
     sealed class Effect {
