@@ -25,6 +25,7 @@ import ru.dl.checklist.app.ext.RetrofitHandler.errorHandler
 import ru.dl.checklist.app.ext.RetrofitHandler.exceptionHandler
 import ru.dl.checklist.app.ext.whenNotNullNorEmpty
 import ru.dl.checklist.app.utils.ApiResult
+import ru.dl.checklist.app.utils.Constants.currentUser
 import ru.dl.checklist.app.utils.hasOnlyOnePath
 import ru.dl.checklist.data.mapper.DtoToDomainMapper.toDomain
 import ru.dl.checklist.data.mapper.DtoToEntityMapper.toEntity
@@ -69,7 +70,7 @@ class CheckListRepositoryImpl @Inject constructor(
 
     override fun getChecklists(): Flow<ApiResult<List<ChecklistDomain>>> = flow {
         val myScope = CoroutineScope(Dispatchers.IO)
-        val response = remoteDataSource.getChecklist()
+        val response = remoteDataSource.getChecklist(currentUser)
         response.suspendOnSuccess {
             var scopeResult: ApiResult<List<ChecklistDomain>> = ApiResult.Loading
             val job = myScope.launch {
@@ -116,7 +117,7 @@ class CheckListRepositoryImpl @Inject constructor(
 
     override fun getHouseChecklists(): Flow<ApiResult<List<HouseChecklistDomain>>> = flow {
         val myScope = CoroutineScope(dispatcher)
-        val response = remoteDataSource.getHouseChecklists()
+        val response = remoteDataSource.getHouseChecklists(currentUser)
         response.suspendOnSuccess {
             var scopeResult: ApiResult<List<HouseChecklistDomain>> = ApiResult.Loading
             val job = myScope.launch {

@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.dl.checklist.app.app.App
 import ru.dl.checklist.app.utils.ApiResult
+import ru.dl.checklist.app.utils.Constants.currentUser
 import ru.dl.checklist.domain.model.AuthPayload
 import ru.dl.checklist.domain.usecase.AuthenticateUserUseCase
 import ru.dl.checklist.domain.usecase.GetUsersUseCase
@@ -104,6 +105,7 @@ class AuthViewModel : ViewModel(), AuthContract {
                     ApiResult.Loading -> mutableState.update { it.copy(isLoading = true) }
                     is ApiResult.Success -> {
                         mutableState.update { it.copy(isLoading = false) }
+                        currentUser = mutableState.value.username
                         when (result._data.result) {
                             true -> {
                                 val direction =

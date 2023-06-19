@@ -7,6 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Query
 import ru.dl.checklist.data.model.remote.BackendResponseDto
 import ru.dl.checklist.data.model.remote.CheckedObjectsDto
 import ru.dl.checklist.data.model.remote.ChecklistsDto
@@ -19,7 +20,7 @@ import ru.dl.checklist.domain.model.AuthPayload
 
 interface RemoteApi {
     @GET("/checklists")
-    suspend fun getChecklist(): ApiResponse<ChecklistsDto>
+    suspend fun getChecklist(@Query("user") user: String): ApiResponse<ChecklistsDto>
 
     @Multipart
     @POST("/uploadImages")
@@ -41,5 +42,5 @@ interface RemoteApi {
     suspend fun postAuth(@Body authPayload: AuthPayload): ApiResponse<BackendResponseDto>
 
     @GET("/housechecklists")
-    suspend fun getHouseChecklists(): ApiResponse<HouseChecklistsDto>
+    suspend fun getHouseChecklists(@Query("user") user: String): ApiResponse<HouseChecklistsDto>
 }
