@@ -1,5 +1,6 @@
 [versions]
 activityKtx = "1.8.0-alpha05"
+agp = "8.2.0-alpha09"
 androidx-junit = "1.1.5"
 appcompat = "1.7.0-alpha02"
 arrow = "1.2.0-RC"
@@ -14,12 +15,11 @@ espresso-core = "3.5.1"
 fancy = "2.0.2"
 fragmentKtx = "1.6.0"
 glide = "4.15.1"
-gradle = "8.2.0-alpha08"
 gson = "2.10.1"
 junit = "4.13.2"
 junitJupiter = "5.9.3"
 junitJupiterApi = "5.9.3"
-kotlinVersion = "1.9.0-Beta"
+kotlinVersion = "1.9.0-RC"
 kotlinxCoroutinesCore = "1.7.1"
 kotlinxSerializationJson = "1.5.1"
 kspVersion = "1.9.0-Beta-1.0.11"
@@ -82,7 +82,7 @@ detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", 
 detekt-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 fancy = { module = "io.github.shashank02051997:FancyToast", version.ref = "fancy" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
-gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
+gradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { module = "junit:junit", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
@@ -110,6 +110,9 @@ kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinVers
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
 nav-safeargs = { id = "androidx.navigation.safeargs", version.ref = "navigation" }
 secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlinVersion" }
+kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlinVersion" }
 
 [bundles]
 arrow = ["arrow-core", "arrow-fx-coroutines", "arrow-optics"]
