@@ -8,15 +8,15 @@
     <fragment
         android:id="@+id/MainFragment"
         android:name="ru.dl.checklist.app.presenter.main.MainFragment"
-        android:label="Чеклисты"
+        android:label="Объекты"
         tools:layout="@layout/fragment_main">
 
         <action
-            android:id="@+id/action_MainFragment_to_zonesListFragment"
-            app:destination="@id/zonesListFragment" />
-        <action
             android:id="@+id/action_MainFragment_to_objectsFragment"
             app:destination="@id/objectsFragment" />
+        <action
+            android:id="@+id/action_MainFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
     <fragment
         android:id="@+id/zonesListFragment"
@@ -91,5 +91,17 @@
         <argument
             android:name="houseChecklistUUID"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="ru.dl.checklist.app.presenter.detail.DetailFragment"
+        android:label="Чеклисты"
+        tools:layout="@layout/fragment_detail" >
+        <argument
+            android:name="address"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_detailFragment_to_zonesListFragment"
+            app:destination="@id/zonesListFragment" />
     </fragment>
 </navigation>

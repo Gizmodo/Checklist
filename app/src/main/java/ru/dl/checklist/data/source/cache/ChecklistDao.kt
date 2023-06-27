@@ -6,8 +6,10 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import kotlinx.coroutines.flow.Flow
 import ru.dl.checklist.data.model.entity.ChecklistEntity
 import ru.dl.checklist.domain.model.ChecklistDomain
+import ru.dl.checklist.domain.model.ChecklistGroupedByAddressDomain
 
 @Dao
 interface ChecklistDao {
@@ -48,12 +50,15 @@ interface ChecklistDao {
                "            GROUP BY zone.id\n" +
                "       )\n" +
                "       AS tbl ON tbl.checklistId = checklist.id\n" +
-               " GROUP BY checklist.id"
+               "WHERE checklist.address = :address GROUP BY checklist.id"
     )
-    suspend fun getAll(): List<ChecklistDomain>
+    fun getAll(address: String): Flow<List<ChecklistDomain>>
 
     @Query("SELECT * FROM checklist WHERE uuid = :uuid")
     fun getByUUID(uuid: String): ChecklistEntity?
+
+    @Query("SELECT address,short_name as shortname FROM checklist group by address, short_name")
+    suspend fun getChecklistGroupedByAddress(): List<ChecklistGroupedByAddressDomain>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     @Transaction

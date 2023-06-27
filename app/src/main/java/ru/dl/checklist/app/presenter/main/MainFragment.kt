@@ -2,6 +2,7 @@ package ru.dl.checklist.app.presenter.main
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -10,9 +11,8 @@ import ru.dl.checklist.app.ext.collectLatestLifecycleFlow
 import ru.dl.checklist.app.ext.getViewModel
 import ru.dl.checklist.app.ext.navigateExt
 import ru.dl.checklist.app.ext.viewLifecycleLazy
-import ru.dl.checklist.app.utils.SD
 import ru.dl.checklist.databinding.FragmentMainBinding
-import ru.dl.checklist.domain.model.ChecklistDomain
+import ru.dl.checklist.domain.model.ChecklistGroupedByAddressDomain
 import timber.log.Timber
 
 class MainFragment : Fragment(R.layout.fragment_main) {
@@ -21,16 +21,29 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     private val viewModel: MainViewModel by lazy {
         getViewModel { MainViewModel() }
     }
-    private var checklistAdapter = ChecklistAdapter(mutableListOf(), ::onItemClick)
+    private var checklistAdapter = MainObjectAdapter(::onItemClick)
 
-    private fun onItemClick(item: ChecklistDomain) {
-        navigateExt(MainFragmentDirections.actionMainFragmentToZonesListFragment(item.uuid))
+    private fun onItemClick(item: ChecklistGroupedByAddressDomain) {
+        viewModel.event(MainContract.Event.OnItemClick(item))
+    }
+
+    private fun isProgressVisible(isVisible: Boolean) {
+        when (isVisible) {
+            true -> {
+                binding.rvChecklists.visibility = View.GONE
+                binding.progressBar.visibility = View.VISIBLE
+            }
+
+            false -> {
+                binding.rvChecklists.visibility = View.VISIBLE
+                binding.progressBar.visibility = View.GONE
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUI()
-        viewModel.onEvent(ChecklistEvent.LoadChecklist)
         initViewModelObservers()
     }
 
@@ -45,24 +58,39 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             adapter = checklistAdapter
         }
         binding.fabAddChecklist.setOnClickListener {
-            navigateExt(MainFragmentDirections.actionMainFragmentToObjectsFragment())
+            viewModel.event(MainContract.Event.OnAssignClick)
         }
     }
 
     private fun initViewModelObservers() {
-        collectLatestLifecycleFlow(viewModel.checklistEvent) {
-            when (it) {
-                is SD.Error -> {
-                    Timber.e(it.msg)
+        collectLatestLifecycleFlow(viewModel.state) { state ->
+            isProgressVisible(state.loading)
+            Timber.i("Загружено объектов: ${state.list.count()} шт.")
+            checklistAdapter.updateList(state.list)
+        }
+        collectLatestLifecycleFlow(viewModel.effect) { effect ->
+            when (effect) {
+                is MainContract.Effect.Navigate -> {
+                    Timber.i("Переход на ${effect.direction}")
+                    when (effect.direction) {
+                        NavigationRouteMain.RouteAssignChecklist -> {
+                            navigateExt(MainFragmentDirections.actionMainFragmentToObjectsFragment())
+                        }
+
+                        is NavigationRouteMain.RouteDetailChecklist -> {
+                            navigateExt(
+                                MainFragmentDirections.actionMainFragmentToDetailFragment(
+                                    effect.direction.address
+                                )
+                            )
+                        }
+                    }
                 }
 
-                SD.Loading -> {
-                    Timber.i("Загрузка чеклистов")
-                }
-
-                is SD.Success -> {
-                    Timber.i("Загружено чеклистов: ${it.result.count()} шт.")
-                    checklistAdapter.updateList(it.result)
+                is MainContract.Effect.ShowMessage -> {
+                    Toast.makeText(
+                        requireContext(), effect.message, Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }

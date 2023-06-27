@@ -1,4 +1,4 @@
-package ru.dl.checklist.app.presenter.main
+package ru.dl.checklist.app.presenter.detail
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,10 +8,10 @@ import ru.dl.checklist.app.utils.ColorCategory
 import ru.dl.checklist.databinding.CardChecklistBinding
 import ru.dl.checklist.domain.model.ChecklistDomain
 
-class ChecklistAdapter(
-    private val list: MutableList<ChecklistDomain>,
+class DetailChecklistAdapter(
     private val onItemClick: (ChecklistDomain) -> Unit
-) : RecyclerView.Adapter<ChecklistAdapter.ChecklistViewHolder>() {
+) : RecyclerView.Adapter<DetailChecklistAdapter.ChecklistViewHolder>() {
+    private val list = mutableListOf<ChecklistDomain>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChecklistViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = CardChecklistBinding.inflate(inflater, parent, false)
@@ -33,8 +33,6 @@ class ChecklistAdapter(
     inner class ChecklistViewHolder(private val binding: CardChecklistBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ChecklistDomain) = binding.apply {
-            txtAddress.text = item.address
-            txtShortName.text = item.shortName
             txtDate.text = item.auditDate
             txtChecker.text = item.checker
             txtSenior.text = item.senior

@@ -13,14 +13,14 @@ plugins {
 
 android {
     namespace = "ru.dl.checklist"
-    compileSdkPreview = "UpsideDownCake"
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "ru.dl.checklist"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0.1"
+        versionName = "1.01.0.BN-0401"
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
@@ -45,6 +45,16 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
+    }
+    applicationVariants.all {
+        outputs.all {
+            val output = this as? com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            if (output?.outputFileName?.endsWith(".apk") == true) {
+                output.outputFileName =
+                    "${rootProject.name}-${defaultConfig.versionName}.apk "
+            }
+        }
     }
 }
 detekt {

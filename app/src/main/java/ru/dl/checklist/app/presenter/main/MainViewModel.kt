@@ -2,61 +2,85 @@ package ru.dl.checklist.app.presenter.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.dl.checklist.app.app.App
 import ru.dl.checklist.app.utils.ApiResult
-import ru.dl.checklist.app.utils.SD
-import ru.dl.checklist.domain.model.ChecklistDomain
 import ru.dl.checklist.domain.usecase.GetChecklistUseCase
+import timber.log.Timber
 import javax.inject.Inject
 
-class MainViewModel : ViewModel() {
-    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        onException(throwable)
-    }
-
-    private fun onException(throwable: Throwable) {
-        _listChannel.trySend(SD.Loading)
-        // _statePrev.value = StatefulData.Error(throwable.message.toString())
-    }
+class MainViewModel : ViewModel(), MainContract {
+    @Inject
+    lateinit var getChecklistUseCase: dagger.Lazy<GetChecklistUseCase>
 
     init {
         App.appComponent.inject(this)
-        //   loadFoodList()
+        getData()
     }
 
-    private val _listChannel = Channel<SD<List<ChecklistDomain>>>()
-    val checklistEvent = _listChannel.receiveAsFlow()
+    private val mutableState = MutableStateFlow(MainContract.State())
+    override val state: StateFlow<MainContract.State> = mutableState.asStateFlow()
+    private val effectFlow = MutableSharedFlow<MainContract.Effect>()
+    override val effect: SharedFlow<MainContract.Effect> = effectFlow.asSharedFlow()
 
-    @Inject
-    lateinit var getChecklistUseCase: dagger.Lazy<GetChecklistUseCase>
-    fun onEvent(event: ChecklistEvent) {
+    override fun event(event: MainContract.Event) {
         when (event) {
-            ChecklistEvent.LoadChecklist -> loadChecklist()
+            is MainContract.Event.OnItemClick -> viewModelScope.launch {
+                Timber.i("Item clicked ${event.item}")
+                effectFlow.emit(
+                    MainContract.Effect.Navigate(
+                        NavigationRouteMain.RouteDetailChecklist(
+                            event.item.address
+                        )
+                    )
+                )
+            }
+
+            MainContract.Event.OnRefresh -> getData()
+            MainContract.Event.OnAssignClick -> viewModelScope.launch {
+                effectFlow.emit(MainContract.Effect.Navigate(NavigationRouteMain.RouteAssignChecklist))
+            }
+
         }
     }
 
-    private fun loadChecklist() {
-        viewModelScope.launch(exceptionHandler) {
-            getChecklistUseCase.get().run().collectLatest { apiResult ->
-                when (apiResult) {
-                    is ApiResult.Error -> {
-                        _listChannel.send(SD.Error(apiResult._error))
-                    }
+    private fun getData() {
+        viewModelScope.launch { loadChecklist() }
+    }
 
-                    is ApiResult.Success -> {
-                        _listChannel.send(SD.Success(apiResult._data))
-                    }
+    private suspend fun loadChecklist() = getChecklistUseCase.get().run()
+        .catch {
+            effectFlow.emit(
+                MainContract.Effect.ShowMessage(
+                    message = it.localizedMessage ?: "An unexpected error occurred."
+                )
+            )
+        }.onEach { result ->
+            when (result) {
+                is ApiResult.Error -> {
+                    mutableState.update { it.copy(loading = false) }
+                    effectFlow.emit(MainContract.Effect.ShowMessage(message = result._error))
+                }
 
-                    ApiResult.Loading -> {
-                        _listChannel.send(SD.Loading)
+                ApiResult.Loading -> {
+                    mutableState.update { it.copy(loading = true) }
+                }
+
+                is ApiResult.Success -> {
+                    if (result._data.isNotEmpty()) {
+                        mutableState.update { it.copy(list = result._data, loading = false) }
                     }
                 }
             }
-        }
-    }
+        }.launchIn(viewModelScope)
 }

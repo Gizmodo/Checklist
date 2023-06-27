@@ -44,7 +44,7 @@ import ru.dl.checklist.data.source.remote.RemoteApi
 import ru.dl.checklist.domain.model.AssignedTemplateObject
 import ru.dl.checklist.domain.model.AuthPayload
 import ru.dl.checklist.domain.model.BackendResponseDomain
-import ru.dl.checklist.domain.model.ChecklistDomain
+import ru.dl.checklist.domain.model.ChecklistGroupedByAddressDomain
 import ru.dl.checklist.domain.model.HouseCheckDomain
 import ru.dl.checklist.domain.model.HouseChecklistDomain
 import ru.dl.checklist.domain.model.MarkDomain
@@ -68,12 +68,14 @@ class CheckListRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteApi,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : CheckListRepository {
+    override fun getChecklistsByAddress(address: String) =
+        checklistDao.getAll(address).flowOn(dispatcher)
 
-    override fun getChecklists(): Flow<ApiResult<List<ChecklistDomain>>> = flow {
+    override fun getChecklists(): Flow<ApiResult<List<ChecklistGroupedByAddressDomain>>> = flow {
         val myScope = CoroutineScope(Dispatchers.IO)
         val response = remoteDataSource.getChecklist(currentUser)
         response.suspendOnSuccess {
-            var scopeResult: ApiResult<List<ChecklistDomain>> = ApiResult.Loading
+            var scopeResult: ApiResult<List<ChecklistGroupedByAddressDomain>> = ApiResult.Loading
             val job = myScope.launch {
                 try {
                     data.checklists.whenNotNullNorEmpty { list ->
@@ -97,7 +99,7 @@ class CheckListRepositoryImpl @Inject constructor(
                             )
                         }
                     }
-                    val checklist = checklistDao.getAll()
+                    val checklist = checklistDao.getChecklistGroupedByAddress()
                     scopeResult = ApiResult.Success(checklist)
                 } catch (e: Exception) {
                     Timber.e("An error occurred: " + e.message)
